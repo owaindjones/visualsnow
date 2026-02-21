@@ -46,7 +46,7 @@ class Canvas {
       after: 0.01,
       contrast: 1.5,
       edges: 0.1,
-      floaters: 0.25,
+      floaters: 0.1,
       motion: 0.95,
       noise: 0.45,
     }
@@ -296,6 +296,7 @@ async function start() {
       "touchmove",
       "scroll",
       "DOMContentLoaded",
+      "ready",
   ]) {
     canvasListeners[eventType] = () => {
       triggerVideo(eventType);
@@ -345,6 +346,7 @@ async function start() {
         hideMediaButtons();
       });
     } else if(file.type.startsWith("video/")) {
+      video.srcObject = null;
       video.src = URL.createObjectURL(file);
       if (canvas?.source?.pause) {
         canvas.source.pause();
@@ -386,10 +388,10 @@ async function start() {
     );
   })
   const banner = document.getElementById("banner");
-  const main = document.getElementById("main");
-  function toggleBanner(entries) {
-    let entry = entries[0];
-    if (entry.isIntersecting) {
+
+  window.addEventListener("scroll", () => {
+    if (window.scrollY >= (window.innerHeight * 0.66)) {
+      if (banner.classList.contains("invisible")) { return; }
       banner.classList.add("invisible");
       hideMediaButtons();
       canvas.stop();
@@ -397,20 +399,25 @@ async function start() {
         video.pause();
       }
     } else {
+      if (!banner.classList.contains("invisible")) { return; }
       banner.classList.remove("invisible");
       mediaButtons.classList.remove("hide");
       mediaButtons.classList.remove("invisible");
       canvas.loop();
       video.play();
     }
+  });
+
+  canvas.loop();
+  if (video?.play) {
+    video.play();
   }
-  const observer = new IntersectionObserver(toggleBanner);
-  observer.observe(main);
 }
 
 start();
 
+// TODO: Fix cropping
 // TODO: Show the error messages when things break
-// TODO: Fix how the sliders look on mobile
 // TODO: Fix dark mode
 // TODO: Implement additional framebuffers for after-image shader
+// TODO: All the written content!

@@ -74,7 +74,7 @@ float noise(float p) {
 
 vec4 floaters(in vec2 fragCoord)
 {
-    float snow = 0.0;
+    float specs = 0.0;
         for(int i=0;i<3;i++){
             float cellSize = 1.5 + (float(i)*3.0);
             float horizSpeed = (.25+tan(iTime*0.4+float(i*20))+1.0)*0.00004;
@@ -92,10 +92,10 @@ vec4 floaters(in vec2 fragCoord)
             float omiVal = fract(sin(dot(uvStep.xy,vec2(32.4691,94.615)))* 31572.1684);
             if(omiVal<0.08?true:false){
                 float newd = (x+1.0)*0.4*clamp(1.9-d*(15.0+(x*6.3))*(cellSize/1.4),0.0,1.0);
-                snow += newd;
+                specs += newd;
             }
         }
-    return vec4(snow);
+    return vec4(specs);
 }
 
 void main() {
@@ -103,7 +103,8 @@ void main() {
   vec4 vec = img * vec4(iContrast, iContrast, iContrast, iMotion);
   if(iFloaters > 0.01) {
       vec4 floaters = floaters(gl_FragCoord.xy) * iFloaters;
-      vec += floaters;
+      vec.xyz -= floaters.xyz;
+      vec.w += floaters.w;
   }
   if(iAfter > 0.01) {
       float gray = ((0.2126 * vec.r) + (0.7152 * vec.g) + (0.0722 * vec.b)) * (1. + iAfter);
