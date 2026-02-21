@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Visual Snow</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Visual Snow Syndrome: a simulation, and information">
+    <meta name="author" content="Owain Jones">
+    <link rel="stylesheet" href="css/styles.css">
+  </head>
+  <body>
+    <div id="canvas-wrapper">
+      <video id="video" loop autoplay preload="auto" src="./assets/book.webm"></video>
+      <img id="image" src="./assets/book.jpg" />
+      <canvas id="canvas"></canvas>
+      <noscript id="noscript">
+        Sorry! The live demo requires Javascript to be enabled, and it isn't
+        enabled for you. Enable Javascript in your browser, or try another
+        browser or device if you can.
+      </noscript>
+      <div id="unsupported" class="hide">
+        Sorry! You're using a browser which doesn't support the WebGL features we
+        need for the live demo. Try another browser or device if you can.
+      </div>
+      <div id="camera-error" class="hide">
+        Sorry! We failed to open your camera. You may need to grant this webpage
+        permission to use it again.
+      </div>
+      <div id="render-error" class="hide">
+        Sorry! Something went wrong when rendering the visual snow. You may have
+        better luck if you try another browser or device.
+      </div>
+      <form id="media-buttons">
+        <label title="Start camera">
+          📷️ <!-- source font might show camera emoji but there is one before this comment -->
+          <input type="button" id="start-webcam" title="Start camera">
+        </label>
+        <label title="Choose a video or image">
+          📂 <!-- emoji = open folder -->
+          <input type="file" id="select-file" accept="video/*, image/*" capture="environment" />
+        </label>
+        <label title="Close">
+          ❌ <!-- emoji = red cross -->
+          <input type="button" id="close-media-button" />
+        </label>
+      </form>
+    </div>
+    <main id="main">
+      <section id="introduction">
+        <h1>Introduction</h1>
+        <aside class="hide-print">
+          <p>
+            This website shows what it's like to experience <strong>visual snow</strong>. Using either your device's
+            camera, a video or image file, you can see some of the effects that people with
+            <strong>visual snow syndrome</strong> experience.
+          </p>
+          <p>
+            Use the <strong>sliders</strong> to adjust the intensity of each effect. We'll
+            explain more about these effects as you read down the page.
+          </p>
+          <p>
+            <strong>How each person experiences visual snow is incredibly subjective</strong>. This website will not
+            be able to present a perfect simulation of what every person sees.
+          </p>
+        </aside>
+        <p>
+          <strong>Visual Snow</strong> is a set of things which can make it <strong>harder to see</strong>, even when
+          <strong>you have good eyesight</strong>. Most of the effects of visual snow can be seen <strong>even when
+          you have your eyes closed.</strong>
+        </p>
+        <p>
+          <strong>Everyone</strong> can experience some or all of the effects of visual snow from time to time, but
+          many people don't notice them, or aren't bothered by them.
+        </p>
+        <h2 id="visual-snow-syndrome">Visual Snow Syndrome</h2>
+        <p>
+          When visual snow is <strong>intense enough</strong> to create <strong>visual disturbances</strong> which can
+          affect your <strong>day-to-day life</strong>, that's when we refer to it as
+          <strong>Visual Snow Syndrome</strong>, or <strong>VSS</strong> for short.
+        </p>
+      </section>
+      <section id="visual-snow-effects">
+        <h1>What are the effects of Visual Snow?</h1>
+      </section>
+    </main>
+    <nav id="banner">
+      <div id="title">
+        <div id="logo">
+          <h1>Visual</h1>
+          <h1>Snow</h1>
+          <h1>Syndrome</h1>
+        </div>
+        <a id="info-link" href="#introduction" title="Find out what this is about">&quest;</a>
+      </div>
+      <div id="control-wrapper">
+        <div id="fps">FPS: 0</div>
+        <form id="controls">
+          <div class="control">
+            <label for="pAfter">A</label>
+            <input title="After-images / Trails" type="range" id="pAfter" name="after" min="0.01" max="1.0" step="0.01" />
+          </div>
+          <div class="control">
+            <label for="pContrast">C</label>
+            <input title="Contrast" type="range" id="pContrast" name="contrast" min="0.1" max="2" step="0.01" />
+          </div>
+          <div class="control">
+            <label for="pEdges">E</label>
+            <input title="Edges / Halos" type="range" id="pEdges" name="edges" min="0.01" max="1" step="0.01" />
+          </div>
+          <div class="control">
+            <label for="pFloaters">F</label>
+            <input title="Floaters" type="range" id="pFloaters" name="floaters" min="0.01" max="1" step="0.01" />
+          </div>
+          <div class="control">
+            <label for="pMotion">M</label>
+            <input title="Motion Blur" type="range" id="pMotion" name="motion" min="0.25" max="0.9" step="0.01" />
+          </div>
+          <div class="control">
+            <label for="pNoise">N</label>
+            <input title="Noise / Static" type="range" id="pNoise" name="noise" min="0.01" max="0.75" step="0.01" />
+          </div>
+        </form>
+      </div>
+    </nav>
+    <script src="js/main.js"></script>
+  </body>
+</html>

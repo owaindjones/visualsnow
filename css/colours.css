@@ -1,0 +1,32 @@
+/* Light colour palette (default) */
+:root {
+  --background-color: #eee;
+  --background-color-transparent: #eeeeee00;
+  --background-color-accent: #fff;
+  --background-color-accent-transparent: #ffffffa0;
+  --background-color-secondary: #ddd;
+  --background-color-secondary-transparent: #dddddda0;
+  --background-color-highlight: #ccc;
+  --background-color-active: #bbb;
+  --foreground-color: #111;
+  --foreground-color-accent: #000;
+  --foreground-color-secondary: #222;
+}
+
+
+/* Dark colour palette */
+@media (prefers-color-scheme: dark), html.dark-mode {
+  :root {
+    --background-color: #000;
+    --background-color-transparent: #00000000;
+    --background-color-accent: #111;
+    --background-color-accent-transparent: #111111a0;
+    --background-color-secondary: #222;
+    --background-color-secondary-transparent: #222222a0;
+    --background-color-highlight: #333;
+    --background-color-active: #444;
+    --foreground-color: #eee;
+    --foreground-color-accent: #fff;
+    --foreground-color-secondary: #ddd;
+  }
+}
