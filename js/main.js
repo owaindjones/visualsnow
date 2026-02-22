@@ -44,7 +44,7 @@ class Canvas {
     this.fps = 1;
     this.params = {
       after: 0.01,
-      contrast: 1.5,
+      contrast: 1.1,
       edges: 0.1,
       floaters: 0.1,
       motion: 0.95,
@@ -377,12 +377,12 @@ async function start() {
   }
   document.getElementById("info-link").addEventListener("click", (e) => {
     e.preventDefault();
-    const intro = document.getElementById("introduction");
+    const intro = document.getElementById("section-introduction");
     intro.scrollIntoView({
       behavior: "smooth",
     })
     let url = new URL(window.location);
-    url.hash = "introduction"
+    url.hash = "section-introduction"
     window.history.pushState(
         {}, "", url,
     );

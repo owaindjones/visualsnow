@@ -100,24 +100,25 @@ vec4 floaters(in vec2 fragCoord)
 
 void main() {
   vec4 img = texture2D(uSamplerS, vTextureCoord);
-  vec4 vec = img * vec4(iContrast, iContrast, iContrast, iMotion);
+  img.rgb = ((img.rgb - 0.5) * max(iContrast, 0.0) + 0.5);
+  img.w *= iMotion;
   if(iFloaters > 0.01) {
       vec4 floaters = floaters(gl_FragCoord.xy) * iFloaters;
-      vec.xyz -= floaters.xyz;
-      vec.w += floaters.w;
+      img.xyz -= floaters.xyz;
+      img.w += floaters.w;
   }
   if(iAfter > 0.01) {
-      float gray = ((0.2126 * vec.r) + (0.7152 * vec.g) + (0.0722 * vec.b)) * (1. + iAfter);
+      float gray = ((0.2126 * img.r) + (0.7152 * img.g) + (0.0722 * img.b)) * (1. + iAfter);
       float after = step(0.999, gray);
-      vec /= 1.-after;
-      vec *= gray;
+      img /= 1.-after;
+      img *= gray;
   }
   if(iNoise > 0.01) {
       float n = sin(noise2(gl_FragCoord.xy));
       float a = noise2(gl_FragCoord.xy);
-      gl_FragColor = mix(vec, vec4(n, n * .8, n * .9, a), iNoise);
+      gl_FragColor = mix(img, vec4(n, n * .8, n * .9, a), iNoise);
   } else {
-      gl_FragColor = vec;
+      gl_FragColor = img;
   }
   if(iEdges > 0.01) {
       vec4 sobel = sobel(uSamplerS, vTextureCoord, 2.5) * iEdges;
