@@ -11,6 +11,8 @@
   --foreground-color: #111;
   --foreground-color-accent: #000;
   --foreground-color-secondary: #222;
+  --background-color-construction-primary: #ffc;
+  --background-color-construction-secondary: #efefbb;
 }
 
 /* Dark colour palette */
@@ -27,5 +29,7 @@
     --foreground-color: #eee;
     --foreground-color-accent: #fff;
     --foreground-color-secondary: #ddd;
+    --background-color-construction-primary: #331;
+    --background-color-construction-secondary: #2f2f00;
   }
 }

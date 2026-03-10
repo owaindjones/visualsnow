@@ -6,6 +6,8 @@ uniform highp vec2 iResolution;
 uniform highp float iTime;
 varying highp vec2 vTextureCoord;
 uniform highp sampler2D uSamplerS;
+uniform highp sampler2D uSamplerA1;
+uniform highp sampler2D uSamplerA2;
 
 uniform float iAfter;
 uniform float iContrast;
@@ -102,16 +104,14 @@ void main() {
   vec4 img = texture2D(uSamplerS, vTextureCoord);
   img.rgb = ((img.rgb - 0.5) * max(iContrast, 0.0) + 0.5);
   img.w *= iMotion;
+  if (iAfter > 0.01) {
+      vec4 after = texture2D(uSamplerA1, vTextureCoord);
+      img += (after * iAfter);
+  }
   if(iFloaters > 0.01) {
       vec4 floaters = floaters(gl_FragCoord.xy) * iFloaters;
       img.xyz -= floaters.xyz;
       img.w += floaters.w;
-  }
-  if(iAfter > 0.01) {
-      float gray = ((0.2126 * img.r) + (0.7152 * img.g) + (0.0722 * img.b)) * (1. + iAfter);
-      float after = step(0.999, gray);
-      img /= 1.-after;
-      img *= gray;
   }
   if(iNoise > 0.01) {
       float n = sin(noise2(gl_FragCoord.xy));
