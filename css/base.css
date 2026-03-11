@@ -14,6 +14,19 @@ html, body {
 
 body {
   font-family: serif;
+  font-size: 14pt;
+}
+
+a {
+  color: var(--link-color);
+}
+
+a:visited {
+  color: var(--link-color-visited);
+}
+
+a:active {
+  color: var(--link-color-active);
 }
 
 main {
@@ -22,60 +35,73 @@ main {
   background-color: var(--background-color-secondary);
   /*background: linear-gradient(180deg, var(--background-color-transparent) 4rem, var(--background-color-accent-transparent) 10rem, var(--background-color-accent) 22rem);*/
   min-height: 100vh;
-  font-size-adjust: .8;
   color: var(--foreground-color-secondary);
   h1, h2, h3, h4, h5, h6, em, strong {
     color: var(--foreground-color-accent);
-    line-height: 2em;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 3rem;
   }
   pointer-events: none;
-  line-height: 2.5em;
+  line-height: 2rem;
+
+  footer {
+    background-color: var(--background-color-highlight);
+    margin: -1rem;
+    padding: 1rem;
+  }
 
   section {
-    max-width: 60rem;
+    max-width: 72ch;
     margin: 0 auto;
-    margin-bottom: 10rem;
+    margin-bottom: 5rem;
     pointer-events: visible;
 
-    h1, h2 {
+    h1 {
       padding-bottom: .5rem;
-      border-bottom: .2rem var(--foreground-color-accent) dotted;
+      border: none;
+      border-bottom: var(--foreground-color-accent) .2rem dotted;
+      margin-top: 5rem;
+      margin-bottom: 1rem;
     }
 
-    h1 {
-      margin-top: 5rem;
+    h2, h3, h4, h5, h6 {
+      padding-left: 1rem;
+    }
+
+    h2::before, h3::before, h4::before, h5::before, h6::before {
+      content: '\00BB\00A0';
     }
 
     h2 {
       margin-top: 4rem;
-      margin-left: 1rem;
     }
     p:after(h2) {
       margin-left: 2rem;
     }
     h3 {
       margin-top: 3rem;
-      margin-left: 2rem;
+      margin-left: 1rem;
     }
     p:after(h3) {
       margin-left: 3rem;
     }
     h4 {
       margin-top: 2rem;
-      margin-left: 3rem;
+      margin-left: 2rem;
     }
     p:after(h4) {
       margin-left: 4rem;
     }
     h5 {
       margin-top: 1rem;
-      margin-left: 4rem;
+      margin-left: 3rem;
     }
     p:after(h5) {
       margin-left: 5rem;
     }
     h6 {
-      margin-left: 5rem;
+      margin-left: 4rem;
     }
     p:after(h6) {
       margin-left: 6rem;
@@ -85,15 +111,26 @@ main {
       margin-bottom: 2ch;
       text-align: justify;
     }
+    p:last-of-type {
+      margin-bottom: 0;
+    }
     aside {
-      padding: 1rem 2rem;
+      break-inside: avoid;
+      padding: 2rem;
       margin: 2rem 1rem;
       border-radius: 1rem;
       background-color: var(--background-color-highlight);
       border: 1px dotted var(--foreground-color-secondary);
 
+      h1:first-of-type {
+        margin-top: 0;
+      }
+
       p {
         margin-left: 0;
+      }
+      p:last-of-type {
+        margin-bottom: 0;
       }
     }
   }
@@ -229,7 +266,7 @@ main {
   }
 }
 
-#banner {
+nav#banner {
   transition: opacity .5s ease-in-out;
   position: fixed;
   top: 0;
@@ -248,6 +285,7 @@ main {
   justify-content: space-between;
   gap: 1rem;
   height: calc(3.5rem + 4rem + 2.2rem + 1rem);
+  z-index: 100;
 
   div, form {
     display: flex;
@@ -341,7 +379,7 @@ main {
 }
 
 @media(max-width: 768px) {
-  #banner {
+  nav#banner {
     zoom: 0.75;
     max-width: calc(100vw + 25%);
   }

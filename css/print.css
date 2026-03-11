@@ -4,3 +4,39 @@
   --background-color: white;
   --foreground-color: black;
 }
+
+.hide-print {
+  display: none !important;
+}
+
+main {
+  margin-top: unset;
+}
+
+#canvas-wrapper {
+  position: unset;
+  top: unset;
+  left: unset;
+  bottom: unset;
+  right: unset;
+  height: 33vh;
+
+  canvas#canvas {
+    position: unset;
+    top: unset;
+    left: unset;
+    bottom: unset;
+    right: unset;
+  }
+
+  border: .5rem solid var(--foreground-color-secondary);
+}
+
+nav#banner {
+  position: unset;
+  top: unset;
+  left: unset;
+  right: unset;
+  margin-bottom: -13rem;
+  margin-top: 1rem;
+}

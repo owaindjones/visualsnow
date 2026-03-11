@@ -1,10 +1,11 @@
 import { Renderer } from "./renderer.js";
-import { resizeImage, setupCamera } from "./media.js";
+import { resizeImage, setupCamera, selectRandomMedia } from "./media.js";
 import { hideMediaButtons, showMediaButtons } from "./ui.js";
 
 "use strict";
 
 async function start() {
+  selectRandomMedia('safe');
   const target = document.getElementById("canvas");
   const video = document.getElementById("video");
   const image = document.getElementById("image");
@@ -64,6 +65,18 @@ async function start() {
     renderer.videoLoop();
   });
   const mediaButtons = document.getElementById("media-buttons");
+  document.getElementById("random-video").addEventListener("click", async () => {
+    if (renderer?.source?.pause) {
+      renderer.source.pause();
+      renderer.stopVideo();
+    }
+    selectRandomMedia();
+    // renderer.source = image;
+    // await renderer.setTarget(target);
+    // renderer.source = video;
+    await renderer.setTarget(target);
+    renderer.videoLoop();
+  })
   document.getElementById("start-webcam").addEventListener("click", async () => {
     if (renderer?.source?.pause) {
       renderer.source.pause();
@@ -165,8 +178,9 @@ start();
 
 // TODO: Refactor main.js to be less spaghetti, move more UI stuff into ui.js
 // TODO: Fix the requestVideoFrame texture upload
+// TODO: Fix videos not playing on mobile firefox - screen goes black after switch from static image
+// TODO: Run prettier on code
 // TODO: Optimise render pipeline + shaders
 // TODO: Show the error messages when things break
-// TODO: Fix dark mode
 // TODO: Implement additional render textures to allow gaussian blurring in shader
 // TODO: All the written content!

@@ -9,9 +9,42 @@
     <link rel="stylesheet" href="css/styles.css">
   </head>
   <body>
+    <nav id="banner">
+      <div id="title">
+        <div id="logo">
+          <h1>Visual</h1>
+          <h1>Snow</h1>
+          <h1>Syndrome</h1>
+        </div>
+        <a id="info-link" href="#section-introduction" title="Find out what this is about">&quest;</a>
+      </div>
+      <div id="control-wrapper" class="hide-print">
+        <div id="fps">FPS: 0</div>
+        <form id="controls">
+          <div class="control">
+            <input title="After-images / Trails" type="range" id="pAfter" name="after" min="0.01" max="1.0" step="0.01" />
+          </div>
+          <div class="control">
+            <input title="Contrast" type="range" id="pContrast" name="contrast" min="0.1" max="2" step="0.01" />
+          </div>
+          <div class="control">
+            <input title="Edges / Halos" type="range" id="pEdges" name="edges" min="0.01" max="1" step="0.01" />
+          </div>
+          <div class="control">
+            <input title="Floaters" type="range" id="pFloaters" name="floaters" min="0.01" max="1" step="0.01" />
+          </div>
+          <div class="control">
+            <input title="Motion Blur" type="range" id="pMotion" name="motion" min="0.25" max="0.9" step="0.01" />
+          </div>
+          <div class="control">
+            <input title="Noise / Static" type="range" id="pNoise" name="noise" min="0.01" max="0.75" step="0.01" />
+          </div>
+        </form>
+      </div>
+    </nav>
     <div id="canvas-wrapper">
-      <video id="video" loop autoplay preload="auto" src="./assets/book.webm"></video>
-      <img id="image" src="./assets/book.jpg" />
+      <video id="video" loop autoplay preload="auto" src="./assets/book.webm" class="hide"></video>
+      <img id="image" src="./assets/book.jpg" class="hide" />
       <canvas id="canvas"></canvas>
       <noscript id="noscript">
         Sorry! The live demo requires Javascript to be enabled, and it isn't
@@ -30,10 +63,14 @@
         Sorry! Something went wrong when rendering the visual snow. You may have
         better luck if you try another browser or device.
       </div>
-      <form id="media-buttons">
+      <form id="media-buttons" class="hide-print">
+        <label title="Pick a random video">
+          🎲 <!-- emoji = dice -->
+          <input type="button" id="random-video" />
+        </label>
         <label title="Start camera">
           📷️ <!-- source font might show camera emoji but there is one before this comment -->
-          <input type="button" id="start-webcam" title="Start camera">
+          <input type="button" id="start-webcam">
         </label>
         <label title="Choose a video or image">
           📂 <!-- emoji = open folder -->
@@ -81,7 +118,7 @@
       </section>
       <section id="under-construction">
         <aside>
-          <h1>Under Construction</h1>
+          <h1>🚧 Under Construction 🚧</h1>
           <p>
             The informational content on this site is very much still in construction! I plan to turn this into
             an interactive article with well-researched references.
@@ -159,45 +196,32 @@
       <section id="section-references">
         <h1>References</h1>
       </section>
-      <section id="section-thanks">
-        <h1>Thanks and acknowledgements</h1>
-
-        <h2 id="section-credits">Website credits</h2>
-      </section>
+      <footer>
+        <section id="section-credits">
+          <h1>Website credits</h1>
+          <p>
+            Source to this site:
+              <a href="https://github.com/owaindjones/visualsnow" target="_blank">
+                <img src="assets/git.png" style="max-width: 2ch; max-height: 2ch;" alt="Git logo" />
+                github.com/owaindjones/visualsnow
+              </a>
+          </p>
+          <p>
+            Created by <a href="https://odj.me" target="_blank">Owain Jones</a> with support from
+            the Neurodiversity Staff Network Group at the
+            <a href="https://noc.ac.uk" target="_blank">National Oceanography Centre</a>.
+            All photos and videos used in examples are Owain's.
+          </p>
+          <p>
+            Shout out to Alfie Woodland for feedback &amp; ideas!
+          </p>
+          <p>
+            Shout out to <a href="https://www.shadertoy.com" target="_blank">Shadertoy</a> and all its
+            users for inspiration and learning how to wrangle fragment shaders.
+          </p>
+        </section>
+      </footer>
     </main>
-    <nav id="banner">
-      <div id="title">
-        <div id="logo">
-          <h1>Visual</h1>
-          <h1>Snow</h1>
-          <h1>Syndrome</h1>
-        </div>
-        <a id="info-link" href="#section-introduction" title="Find out what this is about">&quest;</a>
-      </div>
-      <div id="control-wrapper">
-        <div id="fps">FPS: 0</div>
-        <form id="controls">
-          <div class="control">
-            <input title="After-images / Trails" type="range" id="pAfter" name="after" min="0.01" max="1.0" step="0.01" />
-          </div>
-          <div class="control">
-            <input title="Contrast" type="range" id="pContrast" name="contrast" min="0.1" max="2" step="0.01" />
-          </div>
-          <div class="control">
-            <input title="Edges / Halos" type="range" id="pEdges" name="edges" min="0.01" max="1" step="0.01" />
-          </div>
-          <div class="control">
-            <input title="Floaters" type="range" id="pFloaters" name="floaters" min="0.01" max="1" step="0.01" />
-          </div>
-          <div class="control">
-            <input title="Motion Blur" type="range" id="pMotion" name="motion" min="0.25" max="0.9" step="0.01" />
-          </div>
-          <div class="control">
-            <input title="Noise / Static" type="range" id="pNoise" name="noise" min="0.01" max="0.75" step="0.01" />
-          </div>
-        </form>
-      </div>
-    </nav>
     <script src="js/main.js" type="module"></script>
   </body>
 </html>

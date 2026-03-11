@@ -1,5 +1,37 @@
 "use strict";
 
+const assets = {
+    // Safe = not too much motion, fairly static scenery.
+    // No flashing lights.
+    safe: [
+        "book",
+        "clouds",
+        "laptop",
+        "wheat",
+    ],
+    more: [
+        "candlelight",
+        "flames",
+        "plums",
+        "shore",
+        "street",
+        "water",
+    ]
+}
+
+function selectRandomMedia(category = undefined) {
+  const image = document.getElementById("image");
+  const video = document.getElementById("video");
+  let selectedAssets = [...assets.safe, ...assets.more];
+  if (category) {
+      selectedAssets = assets[category];
+  }
+  const asset = selectedAssets[Math.floor(Math.random() * selectedAssets.length)];
+  image.src = `./assets/${asset}.jpg`;
+  video.src = `./assets/${asset}.webm`;
+  video.srcObject = null;
+}
+
 function resizeImage(file, maxWidth, maxHeight, callback) {
   // Create an Image object
   let img = new Image();
@@ -53,4 +85,4 @@ async function setupCamera(target, video) {
   video.srcObject = stream;
 }
 
-export { resizeImage, setupCamera };
+export { resizeImage, setupCamera, selectRandomMedia, assets };
