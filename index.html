@@ -1,12 +1,15 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>Visual Snow</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Visual Snow Syndrome: a simulation, and information">
-    <meta name="author" content="Owain Jones">
-    <link rel="stylesheet" href="css/styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Visual Snow Syndrome: a simulation, and information"
+    />
+    <meta name="author" content="Owain Jones" />
+    <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body>
     <nav id="banner">
@@ -16,34 +19,94 @@
           <h1>Snow</h1>
           <h1>Syndrome</h1>
         </div>
-        <a id="info-link" href="#section-introduction" title="Find out what this is about">&quest;</a>
+        <a
+          id="info-link"
+          href="#section-introduction"
+          title="Find out what this is about"
+          >&quest;</a
+        >
       </div>
       <div id="control-wrapper" class="hide-print">
         <div id="fps">FPS: 0</div>
         <form id="controls">
           <div class="control">
-            <input title="After-images / Trails" type="range" id="pAfter" name="after" min="0.01" max="1.0" step="0.01" />
+            <input
+              title="After-images / Trails"
+              type="range"
+              id="pAfter"
+              name="after"
+              min="0.01"
+              max="1.0"
+              step="0.01"
+            />
           </div>
           <div class="control">
-            <input title="Contrast" type="range" id="pContrast" name="contrast" min="0.1" max="2" step="0.01" />
+            <input
+              title="Contrast"
+              type="range"
+              id="pContrast"
+              name="contrast"
+              min="0.1"
+              max="2"
+              step="0.01"
+            />
           </div>
           <div class="control">
-            <input title="Edges / Halos" type="range" id="pEdges" name="edges" min="0.01" max="1" step="0.01" />
+            <input
+              title="Edges / Halos"
+              type="range"
+              id="pEdges"
+              name="edges"
+              min="0.01"
+              max="1"
+              step="0.01"
+            />
           </div>
           <div class="control">
-            <input title="Floaters" type="range" id="pFloaters" name="floaters" min="0.01" max="1" step="0.01" />
+            <input
+              title="Floaters"
+              type="range"
+              id="pFloaters"
+              name="floaters"
+              min="0.01"
+              max="1"
+              step="0.01"
+            />
           </div>
           <div class="control">
-            <input title="Motion Blur" type="range" id="pMotion" name="motion" min="0.25" max="0.9" step="0.01" />
+            <input
+              title="Motion Blur"
+              type="range"
+              id="pMotion"
+              name="motion"
+              min="0.25"
+              max="0.9"
+              step="0.01"
+            />
           </div>
           <div class="control">
-            <input title="Noise / Static" type="range" id="pNoise" name="noise" min="0.01" max="0.75" step="0.01" />
+            <input
+              title="Noise / Static"
+              type="range"
+              id="pNoise"
+              name="noise"
+              min="0.01"
+              max="0.75"
+              step="0.01"
+            />
           </div>
         </form>
       </div>
     </nav>
     <div id="canvas-wrapper">
-      <video id="video" loop autoplay preload="auto" src="./assets/book.webm" class="hide"></video>
+      <video
+        id="video"
+        loop
+        autoplay
+        preload="auto"
+        src="./assets/book.webm"
+        class="hide"
+      ></video>
       <img id="image" src="./assets/book.jpg" class="hide" />
       <canvas id="canvas"></canvas>
       <noscript id="noscript">
@@ -52,8 +115,8 @@
         browser or device if you can.
       </noscript>
       <div id="unsupported" class="hide">
-        Sorry! You're using a browser which doesn't support the WebGL features we
-        need for the live demo. Try another browser or device if you can.
+        Sorry! You're using a browser which doesn't support the WebGL features
+        we need for the live demo. Try another browser or device if you can.
       </div>
       <div id="camera-error" class="hide">
         Sorry! We failed to open your camera. You may need to grant this webpage
@@ -65,19 +128,28 @@
       </div>
       <form id="media-buttons" class="hide-print">
         <label title="Pick a random video">
-          🎲 <!-- emoji = dice -->
+          🎲
+          <!-- emoji = dice -->
           <input type="button" id="random-video" />
         </label>
         <label title="Start camera">
-          📷️ <!-- source font might show camera emoji but there is one before this comment -->
-          <input type="button" id="start-webcam">
+          📷️
+          <!-- source font might show camera emoji but there is one before this comment -->
+          <input type="button" id="start-webcam" />
         </label>
         <label title="Choose a video or image">
-          📂 <!-- emoji = open folder -->
-          <input type="file" id="select-file" accept="video/*, image/*" capture="environment" />
+          📂
+          <!-- emoji = open folder -->
+          <input
+            type="file"
+            id="select-file"
+            accept="video/*, image/*"
+            capture="environment"
+          />
         </label>
         <label title="Close">
-          ❌ <!-- emoji = red cross -->
+          ❌
+          <!-- emoji = red cross -->
           <input type="button" id="close-media-button" />
         </label>
       </form>
@@ -87,57 +159,73 @@
         <h1>Introduction</h1>
         <aside class="hide-print">
           <p>
-            This website shows what it's like to experience <strong>visual snow</strong>. Using either your device's
-            camera, a video or image file, you can see some of the effects that people with
-            <strong>visual snow syndrome</strong> experience.
+            This website shows what it's like to experience
+            <strong>visual snow</strong>. Using either your device's camera, a
+            video or image file, you can see some of the effects that people
+            with <strong>visual snow syndrome</strong> experience.
           </p>
           <p>
-            Use the <strong>sliders</strong> to adjust the intensity of each effect. We'll
-            explain more about these effects as you read down the page.
+            Use the <strong>sliders</strong> to adjust the intensity of each
+            effect. We'll explain more about these effects as you read down the
+            page.
           </p>
           <p>
-            <strong>How each person experiences visual snow is incredibly subjective</strong>. This website will not
-            be able to present a perfect simulation of what every person sees.
+            <strong
+              >How each person experiences visual snow is incredibly
+              subjective</strong
+            >. This website will not be able to present a perfect simulation of
+            what every person sees.
           </p>
         </aside>
         <p>
-          <strong>Visual Snow</strong> is a set of things which can <strong>affect your vision</strong>, even when
-          <strong>you have good eyesight</strong>. Most of the effects of visual snow can be seen <strong>even when
-          you have your eyes closed.</strong>
+          <strong>Visual Snow</strong> is a set of things which can
+          <strong>affect your vision</strong>, even when
+          <strong>you have good eyesight</strong>. Most of the effects of visual
+          snow can be seen <strong>even when you have your eyes closed.</strong>
         </p>
         <p>
-          <strong>Everyone</strong> can experience some or all of the effects of visual snow from time to time, but
-          many people don't notice them, or aren't bothered by them.
+          <strong>Everyone</strong> can experience some or all of the effects of
+          visual snow from time to time, but many people don't notice them, or
+          aren't bothered by them.
         </p>
         <h2 id="visual-snow-syndrome">Visual Snow Syndrome</h2>
         <p>
-          When visual snow is <strong>intense enough</strong> to create <strong>visual disturbances</strong> which can
-          affect your <strong>day-to-day life</strong>, that's when we refer to it as
-          <strong>Visual Snow Syndrome</strong>, or <strong>VSS</strong> for short.
+          When visual snow is <strong>intense enough</strong> to create
+          <strong>visual disturbances</strong> which can affect your
+          <strong>day-to-day life</strong>, that's when we refer to it as
+          <strong>Visual Snow Syndrome</strong>, or <strong>VSS</strong> for
+          short.
         </p>
       </section>
       <section id="under-construction">
         <aside>
           <h1>🚧 Under Construction 🚧</h1>
           <p>
-            The informational content on this site is very much still in construction! I plan to turn this into
-            an interactive article with well-researched references.
+            The informational content on this site is very much still in
+            construction! I plan to turn this into an interactive article with
+            well-researched references.
           </p>
-          <p>
-            In the mean-time, here are some links:
-          </p>
+          <p>In the mean-time, here are some links:</p>
           <ul>
             <li>
-              <a href="https://www.visualsnowinitiative.org" target="_blank">Visual Snow Initiative</a>
+              <a href="https://www.visualsnowinitiative.org" target="_blank"
+                >Visual Snow Initiative</a
+              >
             </li>
             <li>
-              <a href="https://reddit.com/r/visualsnow" target="_blank">Visual Snow Subreddit</a>
+              <a href="https://reddit.com/r/visualsnow" target="_blank"
+                >Visual Snow Subreddit</a
+              >
             </li>
             <li>
-              <a href="https://visualsnowsyndrome.com" target="_blank">The Visual Snow Foundation</a>
+              <a href="https://visualsnowsyndrome.com" target="_blank"
+                >The Visual Snow Foundation</a
+              >
             </li>
             <li>
-              <a href="https://www.visualsnowsimulator.com" target="_blank">Another Visual Snow Simulator</a>
+              <a href="https://www.visualsnowsimulator.com" target="_blank"
+                >Another Visual Snow Simulator</a
+              >
             </li>
             <li>
               <a href="https://odj.me/blog/2021-10-23-senses" target="_blank">
@@ -152,7 +240,9 @@
 
         <h2 id="section-visual-snow-effects-noise">Noise / Static / Grain</h2>
 
-        <h2 id="section-visual-snow-effects-afterimages">After-images of objects with bold edges</h2>
+        <h2 id="section-visual-snow-effects-afterimages">
+          After-images of objects with bold edges
+        </h2>
 
         <h2 id="section-visual-snow-effects-trails">Light trails</h2>
 
@@ -201,23 +291,29 @@
           <h1>Website credits</h1>
           <p>
             Source to this site:
-              <a href="https://github.com/owaindjones/visualsnow" target="_blank">
-                <img src="assets/git.png" style="max-width: 2ch; max-height: 2ch;" alt="Git logo" />
-                github.com/owaindjones/visualsnow
-              </a>
+            <a href="https://github.com/owaindjones/visualsnow" target="_blank">
+              <img
+                src="assets/git.png"
+                style="max-width: 2ch; max-height: 2ch"
+                alt="Git logo"
+              />
+              github.com/owaindjones/visualsnow
+            </a>
           </p>
           <p>
-            Created by <a href="https://odj.me" target="_blank">Owain Jones</a> with support from
-            the Neurodiversity Staff Network Group at the
-            <a href="https://noc.ac.uk" target="_blank">National Oceanography Centre</a>.
-            All photos and videos used in examples are Owain's.
+            Created by
+            <a href="https://odj.me" target="_blank">Owain Jones</a> with
+            support from the Neurodiversity Staff Network Group at the
+            <a href="https://noc.ac.uk" target="_blank"
+              >National Oceanography Centre</a
+            >. All photos and videos used in examples are Owain's.
           </p>
+          <p>Shout out to Alfie Woodland for feedback &amp; ideas!</p>
           <p>
-            Shout out to Alfie Woodland for feedback &amp; ideas!
-          </p>
-          <p>
-            Shout out to <a href="https://www.shadertoy.com" target="_blank">Shadertoy</a> and all its
-            users for inspiration and learning how to wrangle fragment shaders.
+            Shout out to
+            <a href="https://www.shadertoy.com" target="_blank">Shadertoy</a>
+            and all its users for inspiration and learning how to wrangle
+            fragment shaders.
           </p>
         </section>
       </footer>

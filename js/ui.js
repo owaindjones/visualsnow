@@ -7,10 +7,9 @@ function hideMediaButtons() {
   mediaButtons.classList.add("invisible");
   banner.classList.add("invisible");
   setTimeout(() => {
-      mediaButtons.classList.add("hide");
-      banner.classList.add("hide");
-    }, 2000
-  );
+    mediaButtons.classList.add("hide");
+    banner.classList.add("hide");
+  }, 2000);
 }
 
 function showMediaButtons() {

@@ -29,7 +29,7 @@ main {
     right: unset;
   }
 
-  border: .5rem solid var(--foreground-color-secondary);
+  border: 0.5rem solid var(--foreground-color-secondary);
 }
 
 nav#banner {

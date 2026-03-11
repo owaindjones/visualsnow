@@ -1,6 +1,5 @@
 "use strict";
 
-
 class ShaderPair {
   /**
    * Named vertex+fragment shader pair
@@ -16,15 +15,14 @@ class ShaderPair {
      * Writes the text of the files to `this.vertex` and
      * `this.fragment`.
      */
-    this.vertex = await fetch(
-        `./js/${this.name}.vert`
-    ).then(response=>response.text());
-    this.fragment = await fetch(
-        `./js/${this.name}.frag`
-    ).then(response=>response.text());
+    this.vertex = await fetch(`./js/${this.name}.vert`).then((response) =>
+      response.text(),
+    );
+    this.fragment = await fetch(`./js/${this.name}.frag`).then((response) =>
+      response.text(),
+    );
   }
 }
-
 
 class Renderer {
   /**
@@ -60,9 +58,9 @@ class Renderer {
    */
   constructor(target, source, options) {
     this.options = {
-        debug: false,
-        ...(options || {})
-    }
+      debug: false,
+      ...(options || {}),
+    };
     this.source = source;
     this.fps = 1;
     this.params = {
@@ -72,7 +70,7 @@ class Renderer {
       floaters: 0.25,
       motion: 0.2,
       noise: 0.4,
-    }
+    };
     this.programs = {};
     this.inputs = {};
     this.renderLoopIds = [];
@@ -83,28 +81,30 @@ class Renderer {
   }
 
   debug(...data) {
-      if (!this.options.debug) {
-          return;
-      }
-      console.debug(...data);
+    if (!this.options.debug) {
+      return;
+    }
+    console.debug(...data);
   }
 
   getSourceSize() {
     return {
-        sWidth: this.source.videoWidth || this.source.width || 1,
-        sHeight: this.source.videoHeight || this.source.height || 1
+      sWidth: this.source.videoWidth || this.source.width || 1,
+      sHeight: this.source.videoHeight || this.source.height || 1,
     };
   }
 
   getTargetSize() {
     return {
       tWidth: this.target.width || 1,
-      tHeight: this.target.height || 1
-    }
+      tHeight: this.target.height || 1,
+    };
   }
 
   calcAspect() {
-    if (this.programs.length === 0) { return; }
+    if (this.programs.length === 0) {
+      return;
+    }
     let { tWidth, tHeight } = this.getTargetSize();
     let tAspect = tWidth / tHeight;
     let { sWidth, sHeight } = this.getSourceSize();
@@ -117,9 +117,9 @@ class Renderer {
       scaleX = 1;
     }
     return {
-        scaleX: parseFloat(scaleX),
-        scaleY: parseFloat(scaleY),
-    }
+      scaleX: parseFloat(scaleX),
+      scaleY: parseFloat(scaleY),
+    };
   }
 
   initGl(target) {
@@ -149,14 +149,14 @@ class Renderer {
     this.initSrcTexture();
     this.initAccumTextures();
     setTimeout(() => {
-      this.target.classList.add("loaded")
+      this.target.classList.add("loaded");
     }, 1000);
   }
 
   async initPrograms() {
     this.programs = {
-        main: await this.createProgram('main'),
-        accum: await this.createProgram('accum'),
+      main: await this.createProgram("main"),
+      accum: await this.createProgram("accum"),
     };
 
     // Set up all the program inputs
@@ -177,11 +177,12 @@ class Renderer {
         iFloaters: this.gl.getUniformLocation(program, "iFloaters"),
         iMotion: this.gl.getUniformLocation(program, "iMotion"),
         iNoise: this.gl.getUniformLocation(program, "iNoise"),
-      }
+      };
 
       if (name === "main") {
         this.inputs[name].uSamplerA1 = this.gl.getUniformLocation(
-            program, "uSamplerA1"
+          program,
+          "uSamplerA1",
         );
       }
     }
@@ -201,13 +202,19 @@ class Renderer {
       this.source,
     );
     this.gl.texParameteri(
-        this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE
+      this.gl.TEXTURE_2D,
+      this.gl.TEXTURE_WRAP_S,
+      this.gl.CLAMP_TO_EDGE,
     );
     this.gl.texParameteri(
-        this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE
+      this.gl.TEXTURE_2D,
+      this.gl.TEXTURE_WRAP_T,
+      this.gl.CLAMP_TO_EDGE,
     );
     this.gl.texParameteri(
-        this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR
+      this.gl.TEXTURE_2D,
+      this.gl.TEXTURE_MIN_FILTER,
+      this.gl.LINEAR,
     );
     this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, true);
     this.textureS = textureS;
@@ -220,24 +227,30 @@ class Renderer {
     this.gl.bindTexture(this.gl.TEXTURE_2D, textureA1);
     let { sWidth, sHeight } = this.getSourceSize();
     this.gl.texImage2D(
-        this.gl.TEXTURE_2D,
-        0,
-        this.gl.RGBA,
-        sWidth,
-        sHeight,
-        0,
-        this.gl.RGBA,
-        this.gl.UNSIGNED_BYTE,
-        new Uint8Array(sWidth * sHeight * 4),
+      this.gl.TEXTURE_2D,
+      0,
+      this.gl.RGBA,
+      sWidth,
+      sHeight,
+      0,
+      this.gl.RGBA,
+      this.gl.UNSIGNED_BYTE,
+      new Uint8Array(sWidth * sHeight * 4),
     );
     this.gl.texParameteri(
-        this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE
+      this.gl.TEXTURE_2D,
+      this.gl.TEXTURE_WRAP_S,
+      this.gl.CLAMP_TO_EDGE,
     );
     this.gl.texParameteri(
-        this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE
+      this.gl.TEXTURE_2D,
+      this.gl.TEXTURE_WRAP_T,
+      this.gl.CLAMP_TO_EDGE,
     );
     this.gl.texParameteri(
-        this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR
+      this.gl.TEXTURE_2D,
+      this.gl.TEXTURE_MIN_FILTER,
+      this.gl.LINEAR,
     );
     this.textureA1 = textureA1;
 
@@ -246,24 +259,30 @@ class Renderer {
     this.gl.activeTexture(this.gl.TEXTURE2);
     this.gl.bindTexture(this.gl.TEXTURE_2D, textureA2);
     this.gl.texImage2D(
-        this.gl.TEXTURE_2D,
-        0,
-        this.gl.RGBA,
-        sWidth,
-        sHeight,
-        0,
-        this.gl.RGBA,
-        this.gl.UNSIGNED_BYTE,
-        new Uint8Array(sWidth * sHeight * 4),
+      this.gl.TEXTURE_2D,
+      0,
+      this.gl.RGBA,
+      sWidth,
+      sHeight,
+      0,
+      this.gl.RGBA,
+      this.gl.UNSIGNED_BYTE,
+      new Uint8Array(sWidth * sHeight * 4),
     );
     this.gl.texParameteri(
-        this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE
+      this.gl.TEXTURE_2D,
+      this.gl.TEXTURE_WRAP_S,
+      this.gl.CLAMP_TO_EDGE,
     );
     this.gl.texParameteri(
-        this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE
+      this.gl.TEXTURE_2D,
+      this.gl.TEXTURE_WRAP_T,
+      this.gl.CLAMP_TO_EDGE,
     );
     this.gl.texParameteri(
-        this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR
+      this.gl.TEXTURE_2D,
+      this.gl.TEXTURE_MIN_FILTER,
+      this.gl.LINEAR,
     );
     this.textureA2 = textureA2;
   }
@@ -275,14 +294,11 @@ class Renderer {
     for (let name of Object.keys(this.programs)) {
       this.gl.useProgram(this.programs[name]);
       this.gl.uniform2f(
-          this.inputs[name].iResolution,
-          parseFloat(this.target.width), parseFloat(this.target.height)
+        this.inputs[name].iResolution,
+        parseFloat(this.target.width),
+        parseFloat(this.target.height),
       );
-      this.gl.uniform2f(
-          this.inputs[name].iScale,
-          scaleX,
-          scaleY,
-      )
+      this.gl.uniform2f(this.inputs[name].iScale, scaleX, scaleY);
     }
 
     this.firstFrame = true;
@@ -296,12 +312,7 @@ class Renderer {
   initPositionBuffers() {
     // Flat 2D plane to render to, takes up full viewport
     const vertices = new Float32Array([
-      -1.0, -1.0,
-      1.0, -1.0,
-      -1.0, 1.0,
-      -1.0, 1.0,
-      1.0, -1.0,
-      1.0, 1.0,
+      -1.0, -1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0,
     ]);
     // Position buffer re-used by both programs
     let positionBuffer = this.gl.createBuffer();
@@ -310,12 +321,17 @@ class Renderer {
     for (let program of Object.values(this.programs)) {
       this.gl.bindAttribLocation(program, 0, "position");
       let positionAttributesLocation = this.gl.getAttribLocation(
-          program, "position"
+        program,
+        "position",
       );
       this.gl.enableVertexAttribArray(positionAttributesLocation);
       this.gl.vertexAttribPointer(
-          positionAttributesLocation, 2, this.gl.FLOAT,
-          false, 0, 0
+        positionAttributesLocation,
+        2,
+        this.gl.FLOAT,
+        false,
+        0,
+        0,
       );
     }
   }
@@ -325,8 +341,8 @@ class Renderer {
     let shaderPack = new ShaderPair(name);
     await shaderPack.load();
     let specs = [
-      {source: shaderPack.vertex, type: this.gl.VERTEX_SHADER},
-      {source: shaderPack.fragment, type: this.gl.FRAGMENT_SHADER},
+      { source: shaderPack.vertex, type: this.gl.VERTEX_SHADER },
+      { source: shaderPack.fragment, type: this.gl.FRAGMENT_SHADER },
     ];
     for (let spec of specs) {
       let shader = this.gl.createShader(spec.type);
@@ -371,12 +387,10 @@ class Renderer {
     //   this.updateSrcTexture();
     // }
     this.videoLoopIds.push(
-        this.target.requestVideoFrameCallback(
-            (time) => {
-              this.videoLoop(time);
-            }
-        )
-    )
+      this.target.requestVideoFrameCallback((time) => {
+        this.videoLoop(time);
+      }),
+    );
   }
 
   renderLoop(time = undefined) {
@@ -388,29 +402,37 @@ class Renderer {
       this.render(time);
     }
     this.renderLoopIds.push(
-        window.requestAnimationFrame(
-            (time) => {
-              this.renderLoop(time);
-            }
-        )
-    )
+      window.requestAnimationFrame((time) => {
+        this.renderLoop(time);
+      }),
+    );
   }
 
   updateParam(event) {
-    if (!event || !event.target) { return; }
-    if (!event.target.id.startsWith("p")) { return; }
-    if (!this.params[event.target.name]) { return; }
+    if (!event || !event.target) {
+      return;
+    }
+    if (!event.target.id.startsWith("p")) {
+      return;
+    }
+    if (!this.params[event.target.name]) {
+      return;
+    }
     this.params[event.target.name] = parseFloat(event.target.value);
   }
 
   calcFPS(time) {
     // Calculate FPS
-    if (!this.controlWrapper.classList.contains("show-fps")) { return; }
+    if (!this.controlWrapper.classList.contains("show-fps")) {
+      return;
+    }
     this.debug("calculate fps");
     let delta = (time - this.lastRender) * 0.001;
-    if (delta < 0.001) { return; }
+    if (delta < 0.001) {
+      return;
+    }
     let fps = 1.0 / delta;
-    this.fps = (fps * 0.01) + (this.fps * 0.99);
+    this.fps = fps * 0.01 + this.fps * 0.99;
     document.getElementById("fps").innerText = `FPS: ${Math.round(this.fps)}`;
     this.lastRender = time;
     return fps;
@@ -466,11 +488,11 @@ class Renderer {
     this.gl.useProgram(this.programs.accum);
     this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.accumFB);
     this.gl.framebufferTexture2D(
-        this.gl.FRAMEBUFFER,
-        this.gl.COLOR_ATTACHMENT0,
-        this.gl.TEXTURE_2D,
-        this.textureA1,
-        0,
+      this.gl.FRAMEBUFFER,
+      this.gl.COLOR_ATTACHMENT0,
+      this.gl.TEXTURE_2D,
+      this.textureA1,
+      0,
     );
     let { sWidth, sHeight } = this.getSourceSize();
     this.gl.viewport(0, 0, sWidth, sHeight);
@@ -482,7 +504,16 @@ class Renderer {
     // Now copy current framebuffer into textureA2 after rendering
     let { sWidth, sHeight } = this.getSourceSize();
     this.gl.bindTexture(this.gl.TEXTURE_2D, this.textureA2);
-    this.gl.copyTexImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, 0, 0, sWidth, sHeight, 0);
+    this.gl.copyTexImage2D(
+      this.gl.TEXTURE_2D,
+      0,
+      this.gl.RGBA,
+      0,
+      0,
+      sWidth,
+      sHeight,
+      0,
+    );
   }
 
   renderMain() {
@@ -506,6 +537,5 @@ class Renderer {
     this.calcFPS(time);
   }
 }
-
 
 export { Renderer };

@@ -1,32 +1,21 @@
 "use strict";
 
 const assets = {
-    // Safe = not too much motion, fairly static scenery.
-    // No flashing lights.
-    safe: [
-        "book",
-        "clouds",
-        "laptop",
-        "wheat",
-    ],
-    more: [
-        "candlelight",
-        "flames",
-        "plums",
-        "shore",
-        "street",
-        "water",
-    ]
-}
+  // Safe = not too much motion, fairly static scenery.
+  // No flashing lights.
+  safe: ["book", "clouds", "laptop", "wheat"],
+  more: ["candlelight", "flames", "plums", "shore", "street", "water"],
+};
 
 function selectRandomMedia(category = undefined) {
   const image = document.getElementById("image");
   const video = document.getElementById("video");
   let selectedAssets = [...assets.safe, ...assets.more];
   if (category) {
-      selectedAssets = assets[category];
+    selectedAssets = assets[category];
   }
-  const asset = selectedAssets[Math.floor(Math.random() * selectedAssets.length)];
+  const asset =
+    selectedAssets[Math.floor(Math.random() * selectedAssets.length)];
   image.src = `./assets/${asset}.jpg`;
   video.src = `./assets/${asset}.webm`;
   video.srcObject = null;
@@ -37,7 +26,7 @@ function resizeImage(file, maxWidth, maxHeight, callback) {
   let img = new Image();
 
   // Set up the onload event handler
-  img.onload = function() {
+  img.onload = function () {
     // Create a canvas
     let canvas = document.createElement("canvas");
     let ctx = canvas.getContext("2d");
@@ -73,11 +62,11 @@ async function setupCamera(target, video) {
       audio: false,
       video: {
         facingMode: "environment",
-	    width: target.clientWidth,
-	    height: target.clientHeight,
+        width: target.clientWidth,
+        height: target.clientHeight,
         resizeMode: "crop-and-scale",
       },
-    })
+    });
   } catch (err) {
     console.error(`Could not grab camera: ${err.name}: ${err.message}`);
     return null;

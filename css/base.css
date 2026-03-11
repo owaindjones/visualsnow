@@ -3,7 +3,8 @@ html {
   color: var(--foreground-color);
 }
 
-html, body {
+html,
+body {
   min-height: 100vh;
   max-width: 100vw;
   overscroll-behavior: none;
@@ -36,10 +37,22 @@ main {
   /*background: linear-gradient(180deg, var(--background-color-transparent) 4rem, var(--background-color-accent-transparent) 10rem, var(--background-color-accent) 22rem);*/
   min-height: 100vh;
   color: var(--foreground-color-secondary);
-  h1, h2, h3, h4, h5, h6, em, strong {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  em,
+  strong {
     color: var(--foreground-color-accent);
   }
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     line-height: 3rem;
   }
   pointer-events: none;
@@ -58,19 +71,27 @@ main {
     pointer-events: visible;
 
     h1 {
-      padding-bottom: .5rem;
+      padding-bottom: 0.5rem;
       border: none;
-      border-bottom: var(--foreground-color-accent) .2rem dotted;
+      border-bottom: var(--foreground-color-accent) 0.2rem dotted;
       margin-top: 5rem;
       margin-bottom: 1rem;
     }
 
-    h2, h3, h4, h5, h6 {
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
       padding-left: 1rem;
     }
 
-    h2::before, h3::before, h4::before, h5::before, h6::before {
-      content: '\00BB\00A0';
+    h2::before,
+    h3::before,
+    h4::before,
+    h5::before,
+    h6::before {
+      content: "\00BB\00A0";
     }
 
     h2 {
@@ -139,20 +160,23 @@ main {
 #under-construction {
   aside {
     background: repeating-linear-gradient(
-            45deg,
-            var(--background-color-construction-primary),
-            var(--background-color-construction-primary) 1rem,
-            var(--background-color-construction-secondary) 1rem,
-            var(--background-color-construction-secondary) 2rem
+      45deg,
+      var(--background-color-construction-primary),
+      var(--background-color-construction-primary) 1rem,
+      var(--background-color-construction-secondary) 1rem,
+      var(--background-color-construction-secondary) 2rem
     );
   }
 }
 
-.hide, #video, #image {
+.hide,
+#video,
+#image {
   display: none;
 }
 
-#video, #image {
+#video,
+#image {
   max-width: 100vw;
   max-height: 100vh;
 }
@@ -202,7 +226,8 @@ main {
     opacity: 1;
   }
 
-  noscript, div {
+  noscript,
+  div {
     font-size: 150%;
     border: 1px solid var(--foreground-color-secondary);
     background-color: var(--background-color-accent-transparent);
@@ -219,7 +244,7 @@ main {
     background-color: var(--background-color-accent);
     margin: 0 auto;
     margin-bottom: 7rem;
-    transition: opacity .5s ease-in-out;
+    transition: opacity 0.5s ease-in-out;
     gap: 4px;
     padding: 0;
     display: flex;
@@ -267,17 +292,15 @@ main {
 }
 
 nav#banner {
-  transition: opacity .5s ease-in-out;
+  transition: opacity 0.5s ease-in-out;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  text-shadow: 0 0 .25rem var(--background-color);
+  text-shadow: 0 0 0.25rem var(--background-color);
   max-width: 100vw;
   font-size: 200%;
   padding: 1rem;
-  /*background-color: var(--background-color-accent);
-  background: linear-gradient(180deg, var(--background-color-accent) 0%, var(--background-color-accent-transparent) calc(100% - 8rem), var(--background-color-transparent) 100%);*/
   display: flex;
   flex-direction: row;
   vertical-align: middle;
@@ -287,17 +310,18 @@ nav#banner {
   height: calc(3.5rem + 4rem + 2.2rem + 1rem);
   z-index: 100;
 
-  div, form {
+  div,
+  form {
     display: flex;
     flex-direction: column;
     height: 100%;
-    gap: .5rem;
+    gap: 0.5rem;
   }
 
   #title {
     flex-direction: row;
-    text-shadow: 0 0 .5rem var(--background-color);
-    gap: .5rem;
+    text-shadow: 0 0 0.5rem var(--background-color);
+    gap: 0.5rem;
 
     h1 {
       margin: 0;
@@ -326,7 +350,7 @@ nav#banner {
   }
 
   #controls {
-    gap: .5rem;
+    gap: 0.5rem;
     flex-wrap: wrap;
     flex-direction: row;
     height: 100%;
@@ -378,7 +402,7 @@ nav#banner {
   }
 }
 
-@media(max-width: 768px) {
+@media (max-width: 768px) {
   nav#banner {
     zoom: 0.75;
     max-width: calc(100vw + 25%);
