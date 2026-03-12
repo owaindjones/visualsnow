@@ -76,7 +76,7 @@ class Renderer {
     this.renderLoopIds = [];
     this.videoLoopIds = [];
     this.lastRender = 0.0;
-    this.firstFrame = false;
+    this.firstFrame = true;
     this.controlWrapper = document.getElementById("control-wrapper");
   }
 
@@ -136,6 +136,7 @@ class Renderer {
   }
 
   async setTarget(target) {
+    this.firstFrame = true;
     this.target = target;
     // 4096 is the maximum texture size allowed by LibreWolf's
     // "resist fingerprinting" and is just over 4K res
@@ -147,10 +148,11 @@ class Renderer {
     this.initFramebuffer();
     this.initParams();
     this.initSrcTexture();
-    this.initAccumTextures();
+    //this.initAccumTextures();
     setTimeout(() => {
       this.target.classList.add("loaded");
     }, 1000);
+    this.renderLoop();
   }
 
   async initPrograms() {
@@ -380,14 +382,17 @@ class Renderer {
     //  most of the time, have fallen back to copying video frames to textures
     //  as part of the main renderLoop
     this.stopVideo();
-    if (!this.source || this.target) {
+    if (!this.source || !this.target) {
       return;
     }
-    // if (time) {
-    //   this.updateSrcTexture();
-    // }
+    if (time) {
+      this.updateSrcTexture();
+    }
+    if (!this.source.requestVideoFrameCallback) {
+      return;
+    }
     this.videoLoopIds.push(
-      this.target.requestVideoFrameCallback((time) => {
+      this.source.requestVideoFrameCallback((time) => {
         this.videoLoop(time);
       }),
     );
@@ -398,9 +403,13 @@ class Renderer {
     if (!this.source || !this.target) {
       return;
     }
+    if (this.firstFrame) {
+      this.initAccumTextures();
+    }
     if (time) {
       this.render(time);
     }
+    this.firstFrame = false;
     this.renderLoopIds.push(
       window.requestAnimationFrame((time) => {
         this.renderLoop(time);
@@ -530,11 +539,21 @@ class Renderer {
 
   render(time) {
     this.updateInputs(time);
-    this.updateSrcTexture();
+    if (!this.source.requestVideoFrameCallback) {
+      this.updateSrcTexture();
+    }
     this.renderAccum();
     this.updateAccumFrame();
     this.renderMain();
     this.calcFPS(time);
+  }
+
+  stop() {
+    if (this.source.pause) {
+      this.source.pause();
+    }
+    this.stopVideo();
+    this.stopRender();
   }
 }
 

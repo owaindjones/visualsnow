@@ -12,6 +12,62 @@
     <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body>
+    <div id="canvas-wrapper">
+      <video
+        id="video"
+        loop
+        muted
+        preload="auto"
+        src="./assets/book.webm"
+        class="hide"
+      ></video>
+      <img id="image" src="./assets/book.jpg" class="hide" />
+      <canvas id="canvas"></canvas>
+      <noscript id="noscript">
+        Sorry! The live demo requires Javascript to be enabled, and it isn't
+        enabled for you. Enable Javascript in your browser, or try another
+        browser or device if you can.
+      </noscript>
+      <div id="unsupported" class="hide">
+        Sorry! You're using a browser which doesn't support the WebGL features
+        we need for the live demo. Try another browser or device if you can.
+      </div>
+      <div id="camera-error" class="hide">
+        Sorry! We failed to open your camera. You may need to grant this webpage
+        permission to use it again.
+      </div>
+      <div id="render-error" class="hide">
+        Sorry! Something went wrong when rendering the visual snow. You may have
+        better luck if you try another browser or device.
+      </div>
+      <form id="media-buttons" class="hide-print">
+        <label title="Pick a random video">
+          🎲
+          <!-- emoji = dice -->
+          <input type="button" id="random-video" />
+        </label>
+        <label title="Start camera">
+          📷️
+          <!-- source font might show camera emoji but there is one before this comment -->
+          <input type="button" id="start-webcam" />
+        </label>
+        <label title="Choose a video or image">
+          📂
+          <!-- emoji = open folder -->
+          <input
+            type="file"
+            id="select-file"
+            accept="video/*, image/*"
+            capture="environment"
+          />
+        </label>
+        <label title="Close">
+          ❌
+          <!-- emoji = red cross -->
+          <input type="button" id="close-media-button" />
+        </label>
+      </form>
+    </div>
     <nav id="banner">
       <div id="title">
         <div id="logo">
@@ -98,62 +154,6 @@
         </form>
       </div>
     </nav>
-    <div id="canvas-wrapper">
-      <video
-        id="video"
-        loop
-        autoplay
-        preload="auto"
-        src="./assets/book.webm"
-        class="hide"
-      ></video>
-      <img id="image" src="./assets/book.jpg" class="hide" />
-      <canvas id="canvas"></canvas>
-      <noscript id="noscript">
-        Sorry! The live demo requires Javascript to be enabled, and it isn't
-        enabled for you. Enable Javascript in your browser, or try another
-        browser or device if you can.
-      </noscript>
-      <div id="unsupported" class="hide">
-        Sorry! You're using a browser which doesn't support the WebGL features
-        we need for the live demo. Try another browser or device if you can.
-      </div>
-      <div id="camera-error" class="hide">
-        Sorry! We failed to open your camera. You may need to grant this webpage
-        permission to use it again.
-      </div>
-      <div id="render-error" class="hide">
-        Sorry! Something went wrong when rendering the visual snow. You may have
-        better luck if you try another browser or device.
-      </div>
-      <form id="media-buttons" class="hide-print">
-        <label title="Pick a random video">
-          🎲
-          <!-- emoji = dice -->
-          <input type="button" id="random-video" />
-        </label>
-        <label title="Start camera">
-          📷️
-          <!-- source font might show camera emoji but there is one before this comment -->
-          <input type="button" id="start-webcam" />
-        </label>
-        <label title="Choose a video or image">
-          📂
-          <!-- emoji = open folder -->
-          <input
-            type="file"
-            id="select-file"
-            accept="video/*, image/*"
-            capture="environment"
-          />
-        </label>
-        <label title="Close">
-          ❌
-          <!-- emoji = red cross -->
-          <input type="button" id="close-media-button" />
-        </label>
-      </form>
-    </div>
     <main id="main">
       <section id="section-introduction">
         <h1>Introduction</h1>
@@ -196,10 +196,13 @@
           <strong>Visual Snow Syndrome</strong>, or <strong>VSS</strong> for
           short.
         </p>
-      </section>
-      <section id="under-construction">
-        <aside>
-          <h1>🚧 Under Construction 🚧</h1>
+        <p>
+          Some people may have experienced visual snow
+          <strong>their entire life </strong> and see it as normal, whilst for
+          others it can appear as <strong>a new condition</strong>.
+        </p>
+        <aside id="under-construction">
+          <h1>🚧 Under Construction</h1>
           <p>
             The informational content on this site is very much still in
             construction! I plan to turn this into an interactive article with
@@ -235,7 +238,7 @@
           </ul>
         </aside>
       </section>
-      <section id="section-visual-snow-effects">
+      <section id="section-visual-snow-effects" class="hide">
         <h1>The effects associated with Visual Snow</h1>
 
         <h2 id="section-visual-snow-effects-noise">Noise / Static / Grain</h2>
@@ -248,7 +251,7 @@
 
         <h2 id="section-visual-snow-effects-floaters">Floaters</h2>
       </section>
-      <section id="section-problems">
+      <section id="section-problems" class="hide">
         <h1>When it can be a problem</h1>
 
         <h2 id="section-problems-reading">Reading</h2>
@@ -269,7 +272,7 @@
 
         <h3 id="section-help-medication">Medication</h3>
       </section>
-      <section id="section-research">
+      <section id="section-research" class="hide">
         <h1>The research on Visual Snow</h1>
 
         <h2 id="section-research-demographics">The demographics</h2>
@@ -280,11 +283,26 @@
 
         <h2 id="section-research-new">New discoveries</h2>
       </section>
-      <section id="section-community">
+      <section id="section-community" class="hide">
         <h1>The communities around Visual Snow</h1>
       </section>
-      <section id="section-references">
+      <section id="section-references" class="hide">
         <h1>References</h1>
+      </section>
+      <section id="section-this-site-online" class="show-print">
+        <h1>This document, online</h1>
+        <p>
+          This is an interactive site, where you can view the effects of visual
+          snow in real-time on photos, videos or your live camera feed:
+        </p>
+        <aside style="text-align: center" id="site-link">
+          <h2>
+            <a href="https://owaindjones.github.io/visualsnow" target="_blank">
+              https://owaindjones.github.io/visualsnow
+            </a>
+          </h2>
+          <img src="assets/qr-code.svg" />
+        </aside>
       </section>
       <footer>
         <section id="section-credits">

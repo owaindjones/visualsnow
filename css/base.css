@@ -13,6 +13,10 @@ body {
   gap: 0;
 }
 
+.show-print {
+  display: none;
+}
+
 body {
   font-family: serif;
   font-size: 14pt;
@@ -34,7 +38,6 @@ main {
   padding: 1rem;
   margin-top: 100vh;
   background-color: var(--background-color-secondary);
-  /*background: linear-gradient(180deg, var(--background-color-transparent) 4rem, var(--background-color-accent-transparent) 10rem, var(--background-color-accent) 22rem);*/
   min-height: 100vh;
   color: var(--foreground-color-secondary);
   h1,
@@ -64,13 +67,22 @@ main {
     padding: 1rem;
   }
 
+  img {
+    max-width: 100%;
+    max-height: 100%;
+  }
+
   section {
-    max-width: 72ch;
+    break-after: page;
     margin: 0 auto;
     margin-bottom: 5rem;
     pointer-events: visible;
+    max-width: min(100vw, 90em);
+    column-width: min(100vw, 40ch);
+    column-gap: 2rem;
 
     h1 {
+      column-span: all;
       padding-bottom: 0.5rem;
       border: none;
       border-bottom: var(--foreground-color-accent) 0.2rem dotted;
@@ -78,12 +90,22 @@ main {
       margin-bottom: 1rem;
     }
 
+    /*h2,*/
+    /*h3,*/
+    /*h4,*/
+    /*h5,*/
+    /*h6 {*/
+    /*  padding-left: 1rem;*/
+    /*}*/
+
+    h1,
     h2,
     h3,
     h4,
     h5,
-    h6 {
-      padding-left: 1rem;
+    h6,
+    p {
+      break-inside: avoid;
     }
 
     h2::before,
@@ -97,51 +119,58 @@ main {
     h2 {
       margin-top: 4rem;
     }
-    p:after(h2) {
-      margin-left: 2rem;
-    }
+    /*p:after(h2) {*/
+    /*  margin-left: 2rem;*/
+    /*}*/
     h3 {
       margin-top: 3rem;
-      margin-left: 1rem;
+      /*margin-left: 1rem;*/
     }
-    p:after(h3) {
-      margin-left: 3rem;
-    }
+    /*p:after(h3) {*/
+    /*  margin-left: 3rem;*/
+    /*}*/
     h4 {
       margin-top: 2rem;
-      margin-left: 2rem;
+      /*margin-left: 2rem;*/
     }
-    p:after(h4) {
-      margin-left: 4rem;
-    }
+    /*p:after(h4) {*/
+    /*  margin-left: 4rem;*/
+    /*}*/
     h5 {
       margin-top: 1rem;
-      margin-left: 3rem;
+      /*margin-left: 3rem;*/
     }
-    p:after(h5) {
-      margin-left: 5rem;
-    }
-    h6 {
-      margin-left: 4rem;
-    }
-    p:after(h6) {
-      margin-left: 6rem;
-    }
+    /*p:after(h5) {*/
+    /*  margin-left: 5rem;*/
+    /*}*/
+    /*h6 {*/
+    /*  margin-left: 4rem;*/
+    /*}*/
+    /*p:after(h6) {*/
+    /*  margin-left: 6rem;*/
+    /*}*/
     p {
-      margin-left: 1rem;
+      /*margin-left: 1rem;*/
       margin-bottom: 2ch;
       text-align: justify;
+      text-align-last: auto;
     }
     p:last-of-type {
       margin-bottom: 0;
     }
     aside {
+      display: inline-block;
+      print-color-adjust: exact;
       break-inside: avoid;
       padding: 2rem;
       margin: 2rem 1rem;
       border-radius: 1rem;
       background-color: var(--background-color-highlight);
       border: 1px dotted var(--foreground-color-secondary);
+
+      h1 {
+        column-span: unset;
+      }
 
       h1:first-of-type {
         margin-top: 0;
@@ -157,16 +186,14 @@ main {
   }
 }
 
-#under-construction {
-  aside {
-    background: repeating-linear-gradient(
-      45deg,
-      var(--background-color-construction-primary),
-      var(--background-color-construction-primary) 1rem,
-      var(--background-color-construction-secondary) 1rem,
-      var(--background-color-construction-secondary) 2rem
-    );
-  }
+aside#under-construction {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--background-color-construction-primary),
+    var(--background-color-construction-primary) 1rem,
+    var(--background-color-construction-secondary) 1rem,
+    var(--background-color-construction-secondary) 2rem
+  );
 }
 
 .hide,
@@ -187,6 +214,7 @@ main {
 }
 
 #canvas-wrapper {
+  print-color-adjust: exact;
   background: black;
   position: absolute;
   top: 0;
@@ -202,8 +230,10 @@ main {
   align-items: stretch;
   vertical-align: middle;
   gap: 1rem;
+  z-index: 0;
 
   canvas#canvas {
+    print-color-adjust: exact;
     background: transparent;
     will-change: contents, opacity;
     opacity: 0;
@@ -219,7 +249,7 @@ main {
     overflow: hidden;
     width: 100%;
     height: 100%;
-    pointer-events: none;
+    z-index: 1;
   }
 
   canvas#canvas.loaded {
@@ -235,6 +265,7 @@ main {
     padding: 1rem;
     max-width: 60vw;
     border-radius: 1rem;
+    z-index: 2;
   }
 
   form#media-buttons {
@@ -248,6 +279,7 @@ main {
     gap: 4px;
     padding: 0;
     display: flex;
+    z-index: 3;
 
     input {
       display: none;
@@ -319,6 +351,7 @@ nav#banner {
   }
 
   #title {
+    print-color-adjust: exact;
     flex-direction: row;
     text-shadow: 0 0 0.5rem var(--background-color);
     gap: 0.5rem;
@@ -411,5 +444,50 @@ nav#banner {
   form#media-buttons {
     zoom: 0.75;
     margin-bottom: 6rem;
+  }
+
+  main {
+    section {
+      column-count: 1;
+    }
+
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      padding-left: 1rem;
+    }
+
+    p:after(h2) {
+      margin-left: 2rem;
+    }
+    h3 {
+      margin-left: 1rem;
+    }
+    p:after(h3) {
+      margin-left: 3rem;
+    }
+    h4 {
+      margin-left: 2rem;
+    }
+    p:after(h4) {
+      margin-left: 4rem;
+    }
+    h5 {
+      margin-left: 3rem;
+    }
+    p:after(h5) {
+      margin-left: 5rem;
+    }
+    h6 {
+      margin-left: 4rem;
+    }
+    p:after(h6) {
+      margin-left: 6rem;
+    }
+    p {
+      margin-left: 1rem;
+    }
   }
 }

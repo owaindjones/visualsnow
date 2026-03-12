@@ -14,77 +14,76 @@ async function start() {
     fragment: await fetch("./js/main.frag").then((response) => response.text()),
     accum: await fetch("./js/accum.frag").then((response) => response.text()),
   });
-  video.addEventListener("loadedmetadata", () => {
-    video.play();
-    renderer.videoLoop();
-  });
-  let canvasListeners = {};
-  async function triggerVideo(eventType) {
-    document.removeEventListener(eventType, canvasListeners[eventType]);
-    if (video.started) {
-      return;
-    }
+  video.addEventListener("loadedmetadata", async () => {
     renderer.source = video;
-    video.play();
-    await renderer.setTarget(target);
-    video.started = true;
-    renderer.videoLoop();
-  }
-  for (let eventType of [
+    await video.play();
+  });
+  const eventTypes = [
     "mousemove",
     "mousedown",
+    "mouseup",
+    "focus",
     "mouseover",
+    "mouseout",
     "keydown",
+    "keyup",
     "touchstart",
     "touchmove",
     "scroll",
     "DOMContentLoaded",
     "ready",
-  ]) {
-    canvasListeners[eventType] = () => {
-      triggerVideo(eventType);
-    };
-    document.addEventListener(eventType, canvasListeners[eventType]);
+  ];
+  let canvasListeners = {};
+  async function triggerVideo(eventType, event) {
+    await video.play();
+    return true;
   }
-
-  window.addEventListener("resize", async () => {
-    // TODO: Make resizing window more efficient:
-    //       - Don't need to re-init the whole renderer every time
-    if (renderer?.source?.srcObject) {
-      if (renderer.source.pause) {
-        renderer.source.pause();
-        renderer.stopVideo();
-      }
-      await setupCamera(target, video);
-    }
+  for (let eventType of eventTypes) {
+    canvasListeners[eventType] = async (event) => {
+      await triggerVideo(eventType, event);
+    };
+    window.addEventListener(eventType, canvasListeners[eventType]);
+  }
+  async function onPlay() {
+    renderer.source = video;
     await renderer.setTarget(target);
     renderer.videoLoop();
+    for (let eventType of eventTypes) {
+      if (canvasListeners[eventType]) {
+        window.removeEventListener(eventType, canvasListeners[eventType]);
+      }
+    }
+  }
+  video.addEventListener("playing", onPlay);
+  image.addEventListener("load", async () => {
+    await renderer.setTarget(target);
+    renderer.updateSrcTexture();
   });
-  const mediaButtons = document.getElementById("media-buttons");
+  async function displayChange(resetCamera) {
+    if (resetCamera && renderer?.source?.srcObject) {
+      renderer.stop();
+      await setupCamera(target, video);
+      video.play();
+    }
+  }
+  window.addEventListener("resize", async () => {
+    await displayChange(true);
+  });
+  window
+    .matchMedia("(orientation: portrait)")
+    .addEventListener("change", displayChange);
   document
     .getElementById("random-video")
     .addEventListener("click", async () => {
-      if (renderer?.source?.pause) {
-        renderer.source.pause();
-        renderer.stopVideo();
-      }
+      renderer.stop();
       selectRandomMedia();
-      // renderer.source = image;
-      // await renderer.setTarget(target);
-      // renderer.source = video;
-      await renderer.setTarget(target);
-      renderer.videoLoop();
+      renderer.source = image;
     });
   document
     .getElementById("start-webcam")
     .addEventListener("click", async () => {
-      if (renderer?.source?.pause) {
-        renderer.source.pause();
-        renderer.stopVideo();
-      }
-      await setupCamera(target, video);
-      await renderer.setTarget(target);
-      renderer.videoLoop();
+      renderer.stop();
+      await setupCamera(target, video, true);
       hideMediaButtons();
     });
   document
@@ -93,28 +92,20 @@ async function start() {
       let file = e.target.files[0];
       if (file.type.startsWith("image/")) {
         resizeImage(file, 2048, 2048, async (url) => {
-          if (renderer?.source?.pause) {
-            renderer.source.pause();
-            renderer.stopVideo();
-          }
+          renderer.stop();
           image.src = url;
           renderer.source = image;
-          await renderer.setTarget(target);
           hideMediaButtons();
         });
       } else if (file.type.startsWith("video/")) {
         video.srcObject = null;
         video.src = URL.createObjectURL(file);
-        if (renderer?.source?.pause) {
-          renderer.source.pause();
-          renderer.stopVideo();
-        }
+        renderer.stop();
         renderer.source = video;
-        await renderer.setTarget(target);
-        renderer.videoLoop();
         hideMediaButtons();
       }
     });
+  document.getElementById("canvas").addEventListener("click", showMediaButtons);
   document
     .getElementById("close-media-button")
     .addEventListener("click", hideMediaButtons);
@@ -149,48 +140,40 @@ async function start() {
     window.history.pushState({}, "", url);
   });
   const banner = document.getElementById("banner");
-
-  window.addEventListener("scroll", () => {
+  window.addEventListener("scroll", async () => {
     if (window.scrollY >= window.innerHeight * 0.66) {
       if (banner.classList.contains("invisible")) {
         return;
       }
       banner.classList.add("invisible");
       hideMediaButtons();
-      renderer.stopRender();
       if (video?.pause) {
         video.pause();
-        renderer.stopVideo();
       }
+      renderer.stop();
     } else {
       if (!banner.classList.contains("invisible")) {
         return;
       }
       banner.classList.remove("invisible");
       showMediaButtons();
-      renderer.renderLoop();
       if (video?.play) {
-        renderer.videoLoop();
-        video.play();
+        await video.play();
       }
     }
   });
-
   await renderer.setTarget(target);
-  renderer.renderLoop();
+  renderer.videoLoop();
   if (video?.play) {
-    renderer.videoLoop();
-    video.play();
+    await video.play();
   }
 }
 
 start();
 
+// TODO: Fix the camera orientation on Waterfox for Android? (Might be "resist fingerprinting")
 // TODO: Refactor main.js to be less spaghetti, move more UI stuff into ui.js
-// TODO: Fix the requestVideoFrame texture upload
-// TODO: Fix videos not playing on mobile firefox - screen goes black after switch from static image
-// TODO: Run prettier on code
 // TODO: Optimise render pipeline + shaders
 // TODO: Show the error messages when things break
-// TODO: Implement additional render textures to allow gaussian blurring in shader
+// TODO: Implement additional render textures to allow gaussian blurring in shader for edge "halo" effect
 // TODO: All the written content!

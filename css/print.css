@@ -9,8 +9,16 @@
   display: none !important;
 }
 
+body {
+  font-size: 11pt;
+}
+
 main {
   margin-top: unset;
+
+  section {
+    column-width: min(100vw, 32ch);
+  }
 }
 
 #canvas-wrapper {
@@ -33,10 +41,29 @@ main {
 }
 
 nav#banner {
-  position: unset;
-  top: unset;
-  left: unset;
-  right: unset;
-  margin-bottom: -13rem;
-  margin-top: 1rem;
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  right: 1rem;
+}
+
+.show-print {
+  display: unset !important;
+}
+
+section#section-this-site-online {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: center;
+  align-content: center;
+  vertical-align: center;
+}
+
+aside#site-link {
+  max-width: 30rem !important;
+
+  h2::before {
+    content: unset;
+  }
 }

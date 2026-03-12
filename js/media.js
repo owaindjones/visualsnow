@@ -54,24 +54,43 @@ function resizeImage(file, maxWidth, maxHeight, callback) {
   img.src = URL.createObjectURL(file);
 }
 
-async function setupCamera(target, video) {
+async function setupCamera(target, video, toggleFacingMode = false) {
+  video.pause();
+  if (video.srcObject) {
+    for (let track of video.srcObject.getTracks()) {
+      track.stop();
+    }
+  }
   let stream = null;
+  let maxSize = Math.max(target.clientWidth, target.clientHeight);
+  if (!video.facingMode) {
+    video.facingMode = "environment";
+  } else if (toggleFacingMode) {
+    if (video.facingMode === "environment") {
+      video.facingMode = "user";
+    } else if (video.facingMode === "user") {
+      video.facingMode = null;
+      video.srcObject = null;
+      return;
+    }
+  }
 
   try {
     stream = await navigator.mediaDevices.getUserMedia({
       audio: false,
       video: {
-        facingMode: "environment",
-        width: target.clientWidth,
-        height: target.clientHeight,
+        facingMode: video.facingMode,
+        width: { ideal: maxSize },
+        height: { ideal: maxSize },
         resizeMode: "crop-and-scale",
       },
     });
   } catch (err) {
-    console.error(`Could not grab camera: ${err.name}: ${err.message}`);
     return null;
   }
   video.srcObject = stream;
+  video.play();
+  return stream;
 }
 
 export { resizeImage, setupCamera, selectRandomMedia, assets };
