@@ -4,17 +4,36 @@ precision highp sampler2D;
 
 uniform highp vec2 iResolution;
 uniform highp float iTime;
+uniform highp float iDelta;
 varying highp vec2 vTextureCoord;
-uniform highp sampler2D uSamplerS;
+uniform highp sampler2D uSamplerS1;
+uniform highp sampler2D uSamplerS2;
 uniform highp sampler2D uSamplerA1;
 uniform highp sampler2D uSamplerA2;
 
-uniform float iAfter;
-uniform float iContrast;
-uniform float iEdges;
-uniform float iFloaters;
-uniform float iMotion;
-uniform float iNoise;
+uniform highp float iAfter;
+uniform highp float iBlur;
+uniform highp float iContrast;
+uniform highp float iEdges;
+uniform highp float iFloaters;
+uniform highp float iMotion;
+uniform highp float iNoise;
+
+// https://github.com/Experience-Monks/glsl-fast-gaussian-blur/blob/master/13.glsl
+vec4 blur13(sampler2D image, vec2 uv, vec2 resolution, vec2 direction) {
+  vec4 color = vec4(0.0);
+  vec2 off1 = vec2(1.411764705882353) * direction;
+  vec2 off2 = vec2(3.2941176470588234) * direction;
+  vec2 off3 = vec2(5.176470588235294) * direction;
+  color += texture2D(image, uv) * 0.1964825501511404;
+  color += texture2D(image, uv + (off1 / resolution)) * 0.2969069646728344;
+  color += texture2D(image, uv - (off1 / resolution)) * 0.2969069646728344;
+  color += texture2D(image, uv + (off2 / resolution)) * 0.09447039785044732;
+  color += texture2D(image, uv - (off2 / resolution)) * 0.09447039785044732;
+  color += texture2D(image, uv + (off3 / resolution)) * 0.010381362401148057;
+  color += texture2D(image, uv - (off3 / resolution)) * 0.010381362401148057;
+  return color;
+}
 
 void make_kernel(inout vec4 n[9], sampler2D tex, vec2 coord) {
     float aW = 1.0 / iResolution.x;
@@ -101,7 +120,7 @@ vec4 floaters(in vec2 fragCoord)
 }
 
 void main() {
-  vec4 img = texture2D(uSamplerS, vTextureCoord);
+  vec4 img = texture2D(uSamplerS1, vTextureCoord);
   img.rgb = ((img.rgb - 0.5) * max(iContrast, 0.0) + 0.5);
   img.w *= iMotion;
   if (iAfter > 0.01) {
@@ -121,7 +140,9 @@ void main() {
       gl_FragColor = img;
   }
   if(iEdges > 0.01) {
-      vec4 sobel = sobel(uSamplerS, vTextureCoord, 2.5) * iEdges;
-      gl_FragColor += sobel;
+      vec4 sobel1 = sobel(uSamplerS1, vTextureCoord, 15. * iEdges) * (.5 * iEdges);
+      gl_FragColor += sobel1;
+      vec4 sobel2 = sobel(uSamplerS1, vTextureCoord, 7. * iEdges) * (.5 * iEdges);
+      gl_FragColor -= sobel2;
   }
 }

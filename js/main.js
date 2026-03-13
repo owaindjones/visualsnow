@@ -1,11 +1,15 @@
 import { Renderer } from "./renderer.js";
-import { resizeImage, setupCamera, selectRandomMedia } from "./media.js";
+import {
+  resizeImage,
+  setupCamera,
+  stopVideo,
+  selectRandomMedia,
+} from "./media.js";
 import { hideMediaButtons, showMediaButtons } from "./ui.js";
 
 ("use strict");
 
 async function start() {
-  selectRandomMedia("safe");
   const target = document.getElementById("canvas");
   const video = document.getElementById("video");
   const image = document.getElementById("image");
@@ -46,7 +50,7 @@ async function start() {
   }
   async function onPlay() {
     renderer.source = video;
-    await renderer.setTarget(target);
+    await renderer.updateView(true);
     renderer.videoLoop();
     for (let eventType of eventTypes) {
       if (canvasListeners[eventType]) {
@@ -56,18 +60,30 @@ async function start() {
   }
   video.addEventListener("playing", onPlay);
   image.addEventListener("load", async () => {
-    await renderer.setTarget(target);
-    renderer.updateSrcTexture();
+    await renderer.updateView(true);
   });
-  async function displayChange(resetCamera) {
+  async function displayChange(resetCamera, resume = false) {
     if (resetCamera && renderer?.source?.srcObject) {
       renderer.stop();
-      await setupCamera(target, video);
-      video.play();
+      await setupCamera(target, video, false, false);
+    } else {
+      await renderer.updateView(false, resume);
     }
   }
   window.addEventListener("resize", async () => {
-    await displayChange(true);
+    const threshold = 100;
+    let lastWidth = window.lastWidth || 0;
+    let lastHeight = window.lastHeight || 0;
+    let resetCamera = false;
+    if (
+      Math.abs(window.innerWidth - lastWidth) > threshold &&
+      Math.abs(window.innerHeight - lastHeight) > threshold
+    ) {
+      resetCamera = true;
+    }
+    window.lastWidth = window.innerWidth;
+    window.lastHeight = window.innerHeight;
+    await displayChange(resetCamera);
   });
   window
     .matchMedia("(orientation: portrait)")
@@ -76,6 +92,7 @@ async function start() {
     .getElementById("random-video")
     .addEventListener("click", async () => {
       renderer.stop();
+      await stopVideo(video);
       selectRandomMedia();
       renderer.source = image;
     });
@@ -93,6 +110,7 @@ async function start() {
       if (file.type.startsWith("image/")) {
         resizeImage(file, 2048, 2048, async (url) => {
           renderer.stop();
+          await stopVideo(video);
           image.src = url;
           renderer.source = image;
           hideMediaButtons();
@@ -101,6 +119,7 @@ async function start() {
         video.srcObject = null;
         video.src = URL.createObjectURL(file);
         renderer.stop();
+        await stopVideo(video);
         renderer.source = video;
         hideMediaButtons();
       }
@@ -147,33 +166,34 @@ async function start() {
       }
       banner.classList.add("invisible");
       hideMediaButtons();
-      if (video?.pause) {
-        video.pause();
-      }
       renderer.stop();
+      await stopVideo(video);
     } else {
       if (!banner.classList.contains("invisible")) {
         return;
       }
       banner.classList.remove("invisible");
       showMediaButtons();
-      if (video?.play) {
-        await video.play();
+      if (renderer.source === video) {
+        if (renderer.source.srcObject) {
+          await setupCamera(target, video, false, true);
+        } else if (video?.play) {
+          await video.play();
+        }
+      } else {
+        renderer.renderLoop();
       }
     }
   });
-  await renderer.setTarget(target);
-  renderer.videoLoop();
-  if (video?.play) {
-    await video.play();
-  }
+  await renderer.initTarget();
+  selectRandomMedia("safe");
 }
 
 start();
 
+// TODO: Combined sobel + gaussian blur for "halo" effect
+// TODO: Optimise shaders
 // TODO: Fix the camera orientation on Waterfox for Android? (Might be "resist fingerprinting")
 // TODO: Refactor main.js to be less spaghetti, move more UI stuff into ui.js
-// TODO: Optimise render pipeline + shaders
 // TODO: Show the error messages when things break
-// TODO: Implement additional render textures to allow gaussian blurring in shader for edge "halo" effect
 // TODO: All the written content!

@@ -3,8 +3,8 @@
 const assets = {
   // Safe = not too much motion, fairly static scenery.
   // No flashing lights.
-  safe: ["book", "clouds", "laptop", "wheat"],
-  more: ["candlelight", "flames", "plums", "shore", "street", "water"],
+  safe: ["book", "clouds", "laptop", "wheat", "moon", "ness"],
+  more: ["candlelight", "flames", "plums", "shore", "street", "water", "band"],
 };
 
 function selectRandomMedia(category = undefined) {
@@ -54,13 +54,25 @@ function resizeImage(file, maxWidth, maxHeight, callback) {
   img.src = URL.createObjectURL(file);
 }
 
-async function setupCamera(target, video, toggleFacingMode = false) {
-  video.pause();
-  if (video.srcObject) {
-    for (let track of video.srcObject.getTracks()) {
-      track.stop();
-    }
+async function stopVideo(video) {
+  if (!video.pause) {
+    return;
   }
+  video.pause();
+  if (!video.srcObject) {
+    return;
+  }
+  for (let track of video.srcObject.getTracks()) {
+    await track.stop();
+  }
+}
+
+async function setupCamera(
+  target,
+  video,
+  toggleFacingMode = false,
+  reset = false,
+) {
   let stream = null;
   let maxSize = Math.max(target.clientWidth, target.clientHeight);
   if (!video.facingMode) {
@@ -68,29 +80,36 @@ async function setupCamera(target, video, toggleFacingMode = false) {
   } else if (toggleFacingMode) {
     if (video.facingMode === "environment") {
       video.facingMode = "user";
-    } else if (video.facingMode === "user") {
-      video.facingMode = null;
-      video.srcObject = null;
-      return;
+    } else {
+      video.facingMode = "environment";
     }
   }
-
+  video.pause();
+  const constraints = {
+    facingMode: video.facingMode,
+    width: { ideal: maxSize },
+    height: { ideal: maxSize },
+    resizeMode: "crop-and-scale",
+  };
+  if (!reset && !toggleFacingMode && video.srcObject) {
+    for (let track of video.srcObject.getVideoTracks()) {
+      await track.applyConstraints(constraints);
+    }
+    video.play();
+    return;
+  }
+  await stopVideo(video);
   try {
     stream = await navigator.mediaDevices.getUserMedia({
       audio: false,
-      video: {
-        facingMode: video.facingMode,
-        width: { ideal: maxSize },
-        height: { ideal: maxSize },
-        resizeMode: "crop-and-scale",
-      },
+      video: constraints,
     });
   } catch (err) {
-    return null;
+    return;
   }
+  video.src = null;
   video.srcObject = stream;
   video.play();
-  return stream;
 }
 
-export { resizeImage, setupCamera, selectRandomMedia, assets };
+export { resizeImage, setupCamera, stopVideo, selectRandomMedia, assets };

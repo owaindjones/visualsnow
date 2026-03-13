@@ -64,7 +64,8 @@ class Renderer {
     this.source = source;
     this.fps = 1;
     this.params = {
-      after: 0.75,
+      after: 0.5,
+      blur: 0.5,
       contrast: 1.1,
       edges: 0.1,
       floaters: 0.25,
@@ -76,8 +77,11 @@ class Renderer {
     this.renderLoopIds = [];
     this.videoLoopIds = [];
     this.lastRender = 0.0;
-    this.firstFrame = true;
     this.controlWrapper = document.getElementById("control-wrapper");
+    this.target = target;
+    this.sWidth = 1;
+    this.sHeight = 1;
+    this.firstFrame = true;
   }
 
   debug(...data) {
@@ -107,8 +111,7 @@ class Renderer {
     }
     let { tWidth, tHeight } = this.getTargetSize();
     let tAspect = tWidth / tHeight;
-    let { sWidth, sHeight } = this.getSourceSize();
-    let sAspect = sWidth / sHeight;
+    let sAspect = this.sWidth / this.sHeight;
 
     let scaleY = 1;
     let scaleX = sAspect / tAspect;
@@ -122,7 +125,7 @@ class Renderer {
     };
   }
 
-  initGl(target) {
+  initGl() {
     const gl = this.target.getContext("webgl", {
       colorSpace: "srgb",
       powerPreference: "low-power",
@@ -135,24 +138,35 @@ class Renderer {
     return gl;
   }
 
-  async setTarget(target) {
-    this.firstFrame = true;
-    this.target = target;
-    // 4096 is the maximum texture size allowed by LibreWolf's
-    // "resist fingerprinting" and is just over 4K res
-    this.target.width = Math.min(target.clientWidth, 4096);
-    this.target.height = Math.min(target.clientHeight, 4096);
-    this.gl = this.initGl(this.target);
+  async initTarget() {
+    this.gl = this.initGl();
     await this.initPrograms();
     this.initPositionBuffers();
     this.initFramebuffer();
-    this.initParams();
-    this.initSrcTexture();
-    //this.initAccumTextures();
+    await this.updateView(true);
     setTimeout(() => {
       this.target.classList.add("loaded");
     }, 1000);
-    this.renderLoop();
+  }
+
+  async updateView(reinitTextures = false, resume = true) {
+    // 4096 is the maximum texture size allowed by LibreWolf's
+    // "resist fingerprinting" and is just over 4K res
+    this.target.width = Math.min(this.target.clientWidth, 4096);
+    this.target.height = Math.min(this.target.clientHeight, 4096);
+    let { sWidth, sHeight } = this.getSourceSize();
+    this.sWidth = sWidth;
+    this.sHeight = sHeight;
+    if (reinitTextures) {
+      this.initSrcTexture();
+      this.initAccumTextures();
+      this.firstFrame = true;
+    }
+    this.initParams();
+    this.updateInputs(undefined, true);
+    if (resume) {
+      this.renderLoop();
+    }
   }
 
   async initPrograms() {
@@ -166,14 +180,17 @@ class Renderer {
       let program = this.programs[name];
       this.inputs[name] = {
         // Internal parameters
-        uSamplerS: this.gl.getUniformLocation(program, "uSamplerS"),
+        uSamplerS1: this.gl.getUniformLocation(program, "uSamplerS1"),
+        uSamplerS2: this.gl.getUniformLocation(program, "uSamplerS2"),
         uSamplerA2: this.gl.getUniformLocation(program, "uSamplerA2"),
         iResolution: this.gl.getUniformLocation(program, "iResolution"),
         iScale: this.gl.getUniformLocation(program, "iScale"),
         iTime: this.gl.getUniformLocation(program, "iTime"),
+        iDelta: this.gl.getUniformLocation(program, "iDelta"),
 
         // Adjustable parameters
         iAfter: this.gl.getUniformLocation(program, "iAfter"),
+        iBlur: this.gl.getUniformLocation(program, "iBlur"),
         iContrast: this.gl.getUniformLocation(program, "iContrast"),
         iEdges: this.gl.getUniformLocation(program, "iEdges"),
         iFloaters: this.gl.getUniformLocation(program, "iFloaters"),
@@ -192,9 +209,9 @@ class Renderer {
 
   initSrcTexture() {
     // Set up latest source texture
-    const textureS = this.gl.createTexture();
+    const textureS1 = this.gl.createTexture();
     this.gl.activeTexture(this.gl.TEXTURE0);
-    this.gl.bindTexture(this.gl.TEXTURE_2D, textureS);
+    this.gl.bindTexture(this.gl.TEXTURE_2D, textureS1);
     this.gl.texImage2D(
       this.gl.TEXTURE_2D,
       0,
@@ -219,25 +236,54 @@ class Renderer {
       this.gl.LINEAR,
     );
     this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, true);
-    this.textureS = textureS;
+    this.textureS1 = textureS1;
+
+    // Set up "previous frame" framebuffer
+    const textureS2 = this.gl.createTexture();
+    this.gl.activeTexture(this.gl.TEXTURE1);
+    this.gl.bindTexture(this.gl.TEXTURE_2D, textureS2);
+    this.gl.texImage2D(
+      this.gl.TEXTURE_2D,
+      0,
+      this.gl.RGBA,
+      this.gl.RGBA,
+      this.gl.UNSIGNED_BYTE,
+      this.source,
+    );
+    this.gl.texParameteri(
+      this.gl.TEXTURE_2D,
+      this.gl.TEXTURE_WRAP_S,
+      this.gl.CLAMP_TO_EDGE,
+    );
+    this.gl.texParameteri(
+      this.gl.TEXTURE_2D,
+      this.gl.TEXTURE_WRAP_T,
+      this.gl.CLAMP_TO_EDGE,
+    );
+    this.gl.texParameteri(
+      this.gl.TEXTURE_2D,
+      this.gl.TEXTURE_MIN_FILTER,
+      this.gl.LINEAR,
+    );
+    this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, true);
+    this.textureS2 = textureS2;
   }
 
   initAccumTextures() {
     // Set up render texture
     const textureA1 = this.gl.createTexture();
-    this.gl.activeTexture(this.gl.TEXTURE1);
+    this.gl.activeTexture(this.gl.TEXTURE2);
     this.gl.bindTexture(this.gl.TEXTURE_2D, textureA1);
-    let { sWidth, sHeight } = this.getSourceSize();
     this.gl.texImage2D(
       this.gl.TEXTURE_2D,
       0,
       this.gl.RGBA,
-      sWidth,
-      sHeight,
+      this.sWidth,
+      this.sHeight,
       0,
       this.gl.RGBA,
       this.gl.UNSIGNED_BYTE,
-      new Uint8Array(sWidth * sHeight * 4),
+      new Uint8Array(this.sWidth * this.sHeight * 4),
     );
     this.gl.texParameteri(
       this.gl.TEXTURE_2D,
@@ -258,18 +304,18 @@ class Renderer {
 
     // Set up render texture - previous frame
     const textureA2 = this.gl.createTexture();
-    this.gl.activeTexture(this.gl.TEXTURE2);
+    this.gl.activeTexture(this.gl.TEXTURE3);
     this.gl.bindTexture(this.gl.TEXTURE_2D, textureA2);
     this.gl.texImage2D(
       this.gl.TEXTURE_2D,
       0,
       this.gl.RGBA,
-      sWidth,
-      sHeight,
+      this.sWidth,
+      this.sHeight,
       0,
       this.gl.RGBA,
       this.gl.UNSIGNED_BYTE,
-      new Uint8Array(sWidth * sHeight * 4),
+      new Uint8Array(this.sWidth * this.sHeight * 4),
     );
     this.gl.texParameteri(
       this.gl.TEXTURE_2D,
@@ -302,8 +348,6 @@ class Renderer {
       );
       this.gl.uniform2f(this.inputs[name].iScale, scaleX, scaleY);
     }
-
-    this.firstFrame = true;
   }
 
   initFramebuffer() {
@@ -378,9 +422,6 @@ class Renderer {
   }
 
   videoLoop(time = undefined) {
-    // TODO: this function is a no-op for now as the callbacks aren't working
-    //  most of the time, have fallen back to copying video frames to textures
-    //  as part of the main renderLoop
     this.stopVideo();
     if (!this.source || !this.target) {
       return;
@@ -403,13 +444,9 @@ class Renderer {
     if (!this.source || !this.target) {
       return;
     }
-    if (this.firstFrame) {
-      this.initAccumTextures();
-    }
     if (time) {
       this.render(time);
     }
-    this.firstFrame = false;
     this.renderLoopIds.push(
       window.requestAnimationFrame((time) => {
         this.renderLoop(time);
@@ -424,17 +461,29 @@ class Renderer {
     if (!event.target.id.startsWith("p")) {
       return;
     }
-    if (!this.params[event.target.name]) {
+    let name = event.target.name;
+    if (!this.params[name]) {
       return;
     }
-    this.params[event.target.name] = parseFloat(event.target.value);
+    let value = parseFloat(event.target.value);
+    this.params[name] = value;
+    let name_arr = name.split("");
+    name_arr[0] = name_arr[0].toUpperCase();
+    name_arr.unshift("i");
+    let iName = name_arr.join("");
+    for (let program_name of Object.keys(this.programs)) {
+      let program = this.programs[program_name];
+      let input = this.inputs[program_name][iName];
+      if (!this.gl || !program || !input) {
+        continue;
+      }
+      this.gl.useProgram(program);
+      this.gl.uniform1f(input, value);
+    }
   }
 
   calcFPS(time) {
     // Calculate FPS
-    if (!this.controlWrapper.classList.contains("show-fps")) {
-      return;
-    }
     this.debug("calculate fps");
     let delta = (time - this.lastRender) * 0.001;
     if (delta < 0.001) {
@@ -442,12 +491,14 @@ class Renderer {
     }
     let fps = 1.0 / delta;
     this.fps = fps * 0.01 + this.fps * 0.99;
-    document.getElementById("fps").innerText = `FPS: ${Math.round(this.fps)}`;
+    if (this.controlWrapper.classList.contains("show-fps")) {
+      document.getElementById("fps").innerText = `FPS: ${Math.round(this.fps)}`;
+    }
     this.lastRender = time;
     return fps;
   }
 
-  updateInputs(time) {
+  updateInputs(time, setUserParams = false) {
     // Update all the inputs for the fragment shaders in both programs
     this.debug("update inputs for shaders");
     for (let name of Object.keys(this.programs)) {
@@ -455,15 +506,23 @@ class Renderer {
       let inputs = this.inputs[name];
       this.gl.useProgram(program);
 
-      // Set internal parameters
-      this.gl.uniform1f(inputs.iTime, time * 0.001);
-      // Read textureS into uSamplerS for both programs, from texture slot 0
-      this.gl.uniform1i(this.inputs[name].uSamplerS, 0);
-      // and A2 from texture slot 2
-      this.gl.uniform1i(this.inputs[name].uSamplerA2, 2);
+      if (time) {
+        // Set internal parameters
+        this.gl.uniform1f(inputs.iTime, time * 0.001);
+        this.gl.uniform1f(inputs.iDelta, (time - this.lastRender) * 0.001);
+        // Read textureS1 into uSamplerS1 for both programs, from texture slot 0
+        this.gl.uniform1i(this.inputs[name].uSamplerS1, 0);
+        this.gl.uniform1i(this.inputs[name].uSamplerS2, 1);
+        // and A2 from texture slot 3
+        this.gl.uniform1i(this.inputs[name].uSamplerA2, 3);
+      }
 
+      if (!setUserParams) {
+        continue;
+      }
       // Set user adjustable parameters
       this.gl.uniform1f(inputs.iAfter, this.params.after);
+      this.gl.uniform1f(inputs.iBlur, this.params.blur);
       this.gl.uniform1f(inputs.iContrast, this.params.contrast);
       this.gl.uniform1f(inputs.iEdges, this.params.edges);
       this.gl.uniform1f(inputs.iFloaters, this.params.floaters);
@@ -480,7 +539,7 @@ class Renderer {
       return;
     }
     this.debug("upload current source image to texture");
-    this.gl.bindTexture(this.gl.TEXTURE_2D, this.textureS);
+    this.gl.bindTexture(this.gl.TEXTURE_2D, this.textureS1);
     this.gl.texImage2D(
       this.gl.TEXTURE_2D,
       0,
@@ -503,15 +562,13 @@ class Renderer {
       this.textureA1,
       0,
     );
-    let { sWidth, sHeight } = this.getSourceSize();
-    this.gl.viewport(0, 0, sWidth, sHeight);
+    this.gl.viewport(0, 0, this.sWidth, this.sHeight);
     //this.gl.blendFunc(this.gl.ONE, this.gl.ONE);
     this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
   }
 
   updateAccumFrame() {
     // Now copy current framebuffer into textureA2 after rendering
-    let { sWidth, sHeight } = this.getSourceSize();
     this.gl.bindTexture(this.gl.TEXTURE_2D, this.textureA2);
     this.gl.copyTexImage2D(
       this.gl.TEXTURE_2D,
@@ -519,8 +576,23 @@ class Renderer {
       this.gl.RGBA,
       0,
       0,
-      sWidth,
-      sHeight,
+      this.sWidth,
+      this.sHeight,
+      0,
+    );
+  }
+
+  saveFrame() {
+    // Update output framebuffer into textureS2 after rendering
+    this.gl.bindTexture(this.gl.TEXTURE_2D, this.textureS2);
+    this.gl.copyTexImage2D(
+      this.gl.TEXTURE_2D,
+      0,
+      this.gl.RGBA,
+      0,
+      0,
+      this.target.width,
+      this.target.height,
       0,
     );
   }
@@ -531,29 +603,33 @@ class Renderer {
     this.gl.useProgram(this.programs.main);
     this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
     this.gl.viewport(0, 0, this.target.width, this.target.height);
-    // Read textureA into uSamplerA1 for main program, from texture slot 1
-    this.gl.uniform1i(this.inputs.main.uSamplerA1, 1);
+    // Read textureA1 into uSamplerA1 for main program, from texture slot 2
+    this.gl.uniform1i(this.inputs.main.uSamplerA1, 2);
     //this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
     this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
   }
 
   render(time) {
-    this.updateInputs(time);
+    this.updateInputs(time, false);
     if (!this.source.requestVideoFrameCallback) {
       this.updateSrcTexture();
     }
     this.renderAccum();
     this.updateAccumFrame();
-    this.renderMain();
+    if (!this.firstFrame) {
+      this.renderMain();
+      this.saveFrame();
+    }
+    this.firstFrame = false;
     this.calcFPS(time);
   }
 
   stop() {
+    this.stopVideo();
+    this.stopRender();
     if (this.source.pause) {
       this.source.pause();
     }
-    this.stopVideo();
-    this.stopRender();
   }
 }
 
