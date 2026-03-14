@@ -11,16 +11,13 @@ import { hideMediaButtons, showMediaButtons } from "./ui.js";
 
 async function start() {
   const target = document.getElementById("canvas");
+  const targetWrapper = document.getElementById("demo");
   const video = document.getElementById("video");
   const image = document.getElementById("image");
   const renderer = new Renderer(target, image, {
     vertex: await fetch("./js/main.vert").then((response) => response.text()),
     fragment: await fetch("./js/main.frag").then((response) => response.text()),
     accum: await fetch("./js/accum.frag").then((response) => response.text()),
-  });
-  video.addEventListener("loadedmetadata", async () => {
-    renderer.source = video;
-    await video.play();
   });
   const eventTypes = [
     "mousemove",
@@ -40,6 +37,7 @@ async function start() {
   let canvasListeners = {};
   async function triggerVideo(eventType, event) {
     await video.play();
+    console.debug("Triggered video");
     return true;
   }
   for (let eventType of eventTypes) {
@@ -50,7 +48,7 @@ async function start() {
   }
   async function onPlay() {
     renderer.source = video;
-    await renderer.updateView(true);
+    await renderer.updateView(true, true);
     renderer.videoLoop();
     for (let eventType of eventTypes) {
       if (canvasListeners[eventType]) {
@@ -58,9 +56,16 @@ async function start() {
       }
     }
   }
+  video.addEventListener("loadedmetadata", async () => {
+    renderer.source = video;
+    await video.play();
+    if (!renderer.visible) {
+      await renderer.stop();
+    }
+  });
   video.addEventListener("playing", onPlay);
   image.addEventListener("load", async () => {
-    await renderer.updateView(true);
+    await renderer.updateView(true, true);
   });
   async function displayChange(resetCamera, resume = false) {
     if (resetCamera && renderer?.source?.srcObject) {
@@ -148,48 +153,72 @@ async function start() {
       };
     });
   }
-  document.getElementById("info-link").addEventListener("click", (e) => {
+  document.getElementById("go-to-demo").addEventListener("click", async (e) => {
     e.preventDefault();
-    const intro = document.getElementById("section-introduction");
-    intro.scrollIntoView({
+    targetWrapper.scrollIntoView({
       behavior: "smooth",
+      block: "start",
     });
-    let url = new URL(window.location);
-    url.hash = "section-introduction";
-    window.history.pushState({}, "", url);
   });
-  const banner = document.getElementById("banner");
-  window.addEventListener("scroll", async () => {
-    if (window.scrollY >= window.innerHeight * 0.66) {
-      if (banner.classList.contains("invisible")) {
-        return;
-      }
-      banner.classList.add("invisible");
-      hideMediaButtons();
-      renderer.stop();
-      await stopVideo(video);
-    } else {
-      if (!banner.classList.contains("invisible")) {
-        return;
-      }
-      banner.classList.remove("invisible");
-      showMediaButtons();
-      if (renderer.source === video) {
-        if (renderer.source.srcObject) {
-          await setupCamera(target, video, false, true);
-        } else if (video?.play) {
-          await video.play();
+  const demoObserver = new IntersectionObserver(
+    async (events) => {
+      let entry = events[0];
+      if (entry.intersectionRatio > 0.1) {
+        showMediaButtons();
+        if (renderer.visible) {
+          return;
         }
+        renderer.visible = true;
+        if (renderer.source === video) {
+          if (renderer.source.srcObject) {
+            await setupCamera(target, video, false, true);
+          } else {
+            await video.play();
+          }
+        } else {
+          renderer.videoLoop();
+          await renderer.renderLoop();
+        }
+        let url = new URL(window.location);
+        url.hash = "demo";
+        window.history.pushState({}, "", url);
       } else {
-        renderer.renderLoop();
+        hideMediaButtons();
+        if (!renderer.init) {
+          return;
+        }
+        renderer.stop();
+        renderer.visible = false;
+        await stopVideo(video);
       }
-    }
-  });
-  await renderer.initTarget();
+    },
+    { threshold: 0.1, rootMargin: "-25%" },
+  );
+  demoObserver.observe(targetWrapper);
+  const sectionObserver = new IntersectionObserver(
+    async (events) => {
+      let entry = events[0];
+      if (!entry.isIntersecting) {
+        return;
+      }
+      let title = entry.target.querySelector("h1 a[href]");
+      if (!title?.href?.includes("#")) {
+        return;
+      }
+      window.history.pushState({}, "", title.href);
+    },
+    {
+      threshold: 0.6,
+    },
+  );
+  for (let section of document.getElementsByTagName("section")) {
+    sectionObserver.observe(section);
+  }
+  await renderer.renderLoop(0);
   selectRandomMedia("safe");
 }
 
-start();
+await start();
 
 // TODO: Combined sobel + gaussian blur for "halo" effect
 // TODO: Optimise shaders

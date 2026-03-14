@@ -77,11 +77,14 @@ class Renderer {
     this.renderLoopIds = [];
     this.videoLoopIds = [];
     this.lastRender = 0.0;
-    this.controlWrapper = document.getElementById("control-wrapper");
+    this.demoContainer = document.getElementById("demo");
+    this.fpsContainer = document.getElementById("fps");
     this.target = target;
     this.sWidth = 1;
     this.sHeight = 1;
     this.firstFrame = true;
+    this.init = false;
+    this.visible = false;
   }
 
   debug(...data) {
@@ -139,33 +142,40 @@ class Renderer {
   }
 
   async initTarget() {
-    this.gl = this.initGl();
-    await this.initPrograms();
-    this.initPositionBuffers();
-    this.initFramebuffer();
-    await this.updateView(true);
+    await navigator.locks.request("initTarget", async (lock) => {
+      this.gl = this.initGl();
+      await this.initPrograms();
+      this.initPositionBuffers();
+      this.initFramebuffer();
+      this.init = true;
+    });
     setTimeout(() => {
       this.target.classList.add("loaded");
     }, 1000);
   }
 
   async updateView(reinitTextures = false, resume = true) {
-    // 4096 is the maximum texture size allowed by LibreWolf's
-    // "resist fingerprinting" and is just over 4K res
-    this.target.width = Math.min(this.target.clientWidth, 4096);
-    this.target.height = Math.min(this.target.clientHeight, 4096);
-    let { sWidth, sHeight } = this.getSourceSize();
-    this.sWidth = sWidth;
-    this.sHeight = sHeight;
-    if (reinitTextures) {
-      this.initSrcTexture();
-      this.initAccumTextures();
-      this.firstFrame = true;
+    if (!this.init) {
+      await this.initTarget();
     }
-    this.initParams();
-    this.updateInputs(undefined, true);
+    await navigator.locks.request("updateView", async (lock) => {
+      // 4096 is the maximum texture size allowed by LibreWolf's
+      // "resist fingerprinting" and is just over 4K res
+      this.target.width = Math.min(this.target.clientWidth, 4096);
+      this.target.height = Math.min(this.target.clientHeight, 4096);
+      let { sWidth, sHeight } = this.getSourceSize();
+      this.sWidth = sWidth;
+      this.sHeight = sHeight;
+      if (reinitTextures) {
+        this.initSrcTexture();
+        this.initAccumTextures();
+        this.firstFrame = true;
+      }
+      this.initParams();
+      this.updateInputs(undefined, true);
+    });
     if (resume) {
-      this.renderLoop();
+      await this.renderLoop();
     }
   }
 
@@ -429,8 +439,11 @@ class Renderer {
     if (time) {
       this.updateSrcTexture();
     }
-    if (!this.source.requestVideoFrameCallback) {
+    if (!this.source.requestVideoFrameCallback || !this.visible) {
       return;
+    }
+    if (!time) {
+      console.debug("Started video loop");
     }
     this.videoLoopIds.push(
       this.source.requestVideoFrameCallback((time) => {
@@ -439,17 +452,26 @@ class Renderer {
     );
   }
 
-  renderLoop(time = undefined) {
+  async renderLoop(time = undefined) {
     this.stopRender();
     if (!this.source || !this.target) {
       return;
     }
+    if (!this.init) {
+      await this.updateView(true);
+    }
     if (time) {
-      this.render(time);
+      await this.render(time);
+    }
+    if (!this.visible) {
+      return;
+    }
+    if (!time) {
+      console.debug("Renderer started");
     }
     this.renderLoopIds.push(
-      window.requestAnimationFrame((time) => {
-        this.renderLoop(time);
+      window.requestAnimationFrame(async (time) => {
+        await this.renderLoop(time);
       }),
     );
   }
@@ -491,8 +513,8 @@ class Renderer {
     }
     let fps = 1.0 / delta;
     this.fps = fps * 0.01 + this.fps * 0.99;
-    if (this.controlWrapper.classList.contains("show-fps")) {
-      document.getElementById("fps").innerText = `FPS: ${Math.round(this.fps)}`;
+    if (!this.fpsContainer.classList.contains("hide")) {
+      this.fpsContainer.innerText = `FPS: ${Math.round(this.fps)}`;
     }
     this.lastRender = time;
     return fps;
@@ -533,7 +555,7 @@ class Renderer {
 
   updateSrcTexture() {
     // Upload current source image to texture
-    if (!this.gl) {
+    if (!this.init) {
       // This might be called by a media callback before renderer is
       // fully initialised
       return;
@@ -609,19 +631,21 @@ class Renderer {
     this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
   }
 
-  render(time) {
-    this.updateInputs(time, false);
-    if (!this.source.requestVideoFrameCallback) {
-      this.updateSrcTexture();
-    }
-    this.renderAccum();
-    this.updateAccumFrame();
-    if (!this.firstFrame) {
-      this.renderMain();
-      this.saveFrame();
-    }
-    this.firstFrame = false;
-    this.calcFPS(time);
+  async render(time) {
+    await navigator.locks.request("render", (lock) => {
+      this.updateInputs(time, false);
+      if (!this.source.requestVideoFrameCallback) {
+        this.updateSrcTexture();
+      }
+      this.renderAccum();
+      this.updateAccumFrame();
+      if (!this.firstFrame) {
+        this.renderMain();
+        this.saveFrame();
+      }
+      this.firstFrame = false;
+      this.calcFPS(time);
+    });
   }
 
   stop() {
@@ -630,6 +654,7 @@ class Renderer {
     if (this.source.pause) {
       this.source.pause();
     }
+    console.debug("Renderer stopped");
   }
 }
 

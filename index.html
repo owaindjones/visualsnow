@@ -12,7 +12,107 @@
     <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body>
-    <div id="canvas-wrapper">
+    <main id="intro">
+      <header>
+        <h1>
+          <span style="color: var(--foreground-color)"
+            ><strong>V</strong>isual</span
+          >
+          <span style="color: var(--foreground-color-accent)"
+            ><strong>S</strong>now</span
+          >
+          <span style="color: var(--foreground-color-secondary)"
+            ><strong>S</strong>yndrome</span
+          >
+        </h1>
+      </header>
+      <section id="section-introduction">
+        <h1><a href="#section-introduction">Introduction</a></h1>
+        <aside class="hide-print">
+          <p>
+            This website shows what it's like to experience
+            <strong>visual snow</strong>. Using either your device's camera, a
+            video or image file, you can see some of the effects that people
+            with <strong>visual snow syndrome</strong> experience.
+          </p>
+          <p>
+            Use the <strong>sliders</strong> to adjust the intensity of each
+            effect.
+            <!--            We'll explain more about these effects as you read down the-->
+            <!--            page.-->
+          </p>
+          <p>
+            <strong
+              >How each person experiences visual snow is incredibly
+              subjective</strong
+            >. This website will not be able to present a perfect simulation of
+            what every person sees.
+          </p>
+          <a id="go-to-demo" href="#demo"> Show what it looks like </a>
+        </aside>
+        <p>
+          <strong>Visual Snow</strong> is a set of things which can
+          <strong>affect your vision</strong>, even when
+          <strong>you have good eyesight</strong>. Most of the effects of visual
+          snow can be seen <strong>even when you have your eyes closed.</strong>
+        </p>
+        <p>
+          <strong>Everyone</strong> can experience some or all of the effects of
+          visual snow from time to time, but many people don't notice them, or
+          aren't bothered by them.
+        </p>
+        <h2 id="visual-snow-syndrome">Visual Snow Syndrome</h2>
+        <p>
+          When visual snow is <strong>intense enough</strong> to create
+          <strong>visual disturbances</strong> which can affect your
+          <strong>day-to-day life</strong>, that's when we refer to it as
+          <strong>Visual Snow Syndrome</strong>, or <strong>VSS</strong> for
+          short.
+        </p>
+        <p>
+          Some people may have experienced visual snow
+          <strong>their entire life </strong> and see it as normal, whilst for
+          others it can appear as <strong>a new condition</strong>.
+        </p>
+        <aside id="under-construction">
+          <h1>🚧 Under Construction</h1>
+          <p>
+            The informational content on this site is very much still in
+            construction! I plan to turn this into an interactive article with
+            well-researched references.
+          </p>
+          <p>In the mean-time, here are some links:</p>
+          <ul>
+            <li>
+              <a href="https://www.visualsnowinitiative.org" target="_blank"
+                >Visual Snow Initiative</a
+              >
+            </li>
+            <li>
+              <a href="https://reddit.com/r/visualsnow" target="_blank"
+                >Visual Snow Subreddit</a
+              >
+            </li>
+            <li>
+              <a href="https://visualsnowsyndrome.com" target="_blank"
+                >The Visual Snow Foundation</a
+              >
+            </li>
+            <li>
+              <a href="https://www.visualsnowsimulator.com" target="_blank"
+                >Another Visual Snow Simulator</a
+              >
+            </li>
+            <li>
+              <a href="https://odj.me/blog/2021-10-23-senses" target="_blank">
+                A blog post I wrote about visual snow and other sensory things
+              </a>
+            </li>
+          </ul>
+        </aside>
+      </section>
+    </main>
+    <div id="demo" class="hide-print">
       <video
         id="video"
         loop
@@ -23,67 +123,24 @@
       ></video>
       <img id="image" src="./assets/book.jpg" class="hide" />
       <canvas id="canvas"></canvas>
-      <noscript id="noscript">
-        Sorry! The live demo requires Javascript to be enabled, and it isn't
-        enabled for you. Enable Javascript in your browser, or try another
-        browser or device if you can.
-      </noscript>
-      <div id="unsupported" class="hide">
-        Sorry! You're using a browser which doesn't support the WebGL features
-        we need for the live demo. Try another browser or device if you can.
-      </div>
-      <div id="camera-error" class="hide">
-        Sorry! We failed to open your camera. You may need to grant this webpage
-        permission to use it again.
-      </div>
-      <div id="render-error" class="hide">
-        Sorry! Something went wrong when rendering the visual snow. You may have
-        better luck if you try another browser or device.
-      </div>
-      <form id="media-buttons" class="hide-print">
-        <label title="Pick a random video">
-          🎲
-          <!-- emoji = dice -->
-          <input type="button" id="random-video" />
-        </label>
-        <label title="Start camera">
-          📷️
-          <!-- source font might show camera emoji but there is one before this comment -->
-          <input type="button" id="start-webcam" />
-        </label>
-        <label title="Choose a video or image">
-          📂
-          <!-- emoji = open folder -->
-          <input
-            type="file"
-            id="select-file"
-            accept="video/*, image/*"
-            capture="environment"
-          />
-        </label>
-        <label title="Close">
-          ❌
-          <!-- emoji = red cross -->
-          <input type="button" id="close-media-button" />
-        </label>
-      </form>
-    </div>
-    <nav id="banner">
-      <div id="title">
-        <div id="logo">
-          <h1>Visual</h1>
-          <h1>Snow</h1>
-          <h1>Syndrome</h1>
-        </div>
-        <a
-          id="info-link"
-          href="#section-introduction"
-          title="Find out what this is about"
-          >&quest;</a
-        >
-      </div>
-      <div id="control-wrapper" class="hide-print show-fps">
-        <div id="fps">FPS: 0</div>
+      <!--      <noscript id="noscript">-->
+      <!--        Sorry! The live demo requires Javascript to be enabled, and it isn't-->
+      <!--        enabled for you. Enable Javascript in your browser, or try another-->
+      <!--        browser or device if you can.-->
+      <!--      </noscript>-->
+      <!--      <div id="unsupported" class="hide">-->
+      <!--        Sorry! You're using a browser which doesn't support the WebGL features-->
+      <!--        we need for the live demo. Try another browser or device if you can.-->
+      <!--      </div>-->
+      <!--      <div id="camera-error" class="hide">-->
+      <!--        Sorry! We failed to open your camera. You may need to grant this webpage-->
+      <!--        permission to use it again.-->
+      <!--      </div>-->
+      <!--      <div id="render-error" class="hide">-->
+      <!--        Sorry! Something went wrong when rendering the visual snow. You may have-->
+      <!--        better luck if you try another browser or device.-->
+      <!--      </div>-->
+      <div id="control-wrapper" class="hide-print invisible hide">
         <form id="controls">
           <div class="control">
             <input
@@ -153,91 +210,36 @@
           </div>
         </form>
       </div>
-    </nav>
+      <div id="fps" class="hide-print invisible hide">FPS: 0</div>
+      <form id="media-buttons" class="hide-print invisible hide">
+        <label title="Pick a random video">
+          🎲
+          <!-- emoji = dice -->
+          <input type="button" id="random-video" />
+        </label>
+        <label title="Start camera">
+          📷️
+          <!-- source font might show camera emoji but there is one before this comment -->
+          <input type="button" id="start-webcam" />
+        </label>
+        <label title="Choose a video or image">
+          📂
+          <!-- emoji = open folder -->
+          <input
+            type="file"
+            id="select-file"
+            accept="video/*, image/*"
+            capture="environment"
+          />
+        </label>
+        <label title="Close">
+          ❌
+          <!-- emoji = red cross -->
+          <input type="button" id="close-media-button" />
+        </label>
+      </form>
+    </div>
     <main id="main">
-      <section id="section-introduction">
-        <h1>Introduction</h1>
-        <aside class="hide-print">
-          <p>
-            This website shows what it's like to experience
-            <strong>visual snow</strong>. Using either your device's camera, a
-            video or image file, you can see some of the effects that people
-            with <strong>visual snow syndrome</strong> experience.
-          </p>
-          <p>
-            Use the <strong>sliders</strong> to adjust the intensity of each
-            effect. We'll explain more about these effects as you read down the
-            page.
-          </p>
-          <p>
-            <strong
-              >How each person experiences visual snow is incredibly
-              subjective</strong
-            >. This website will not be able to present a perfect simulation of
-            what every person sees.
-          </p>
-        </aside>
-        <p>
-          <strong>Visual Snow</strong> is a set of things which can
-          <strong>affect your vision</strong>, even when
-          <strong>you have good eyesight</strong>. Most of the effects of visual
-          snow can be seen <strong>even when you have your eyes closed.</strong>
-        </p>
-        <p>
-          <strong>Everyone</strong> can experience some or all of the effects of
-          visual snow from time to time, but many people don't notice them, or
-          aren't bothered by them.
-        </p>
-        <h2 id="visual-snow-syndrome">Visual Snow Syndrome</h2>
-        <p>
-          When visual snow is <strong>intense enough</strong> to create
-          <strong>visual disturbances</strong> which can affect your
-          <strong>day-to-day life</strong>, that's when we refer to it as
-          <strong>Visual Snow Syndrome</strong>, or <strong>VSS</strong> for
-          short.
-        </p>
-        <p>
-          Some people may have experienced visual snow
-          <strong>their entire life </strong> and see it as normal, whilst for
-          others it can appear as <strong>a new condition</strong>.
-        </p>
-        <aside id="under-construction">
-          <h1>🚧 Under Construction</h1>
-          <p>
-            The informational content on this site is very much still in
-            construction! I plan to turn this into an interactive article with
-            well-researched references.
-          </p>
-          <p>In the mean-time, here are some links:</p>
-          <ul>
-            <li>
-              <a href="https://www.visualsnowinitiative.org" target="_blank"
-                >Visual Snow Initiative</a
-              >
-            </li>
-            <li>
-              <a href="https://reddit.com/r/visualsnow" target="_blank"
-                >Visual Snow Subreddit</a
-              >
-            </li>
-            <li>
-              <a href="https://visualsnowsyndrome.com" target="_blank"
-                >The Visual Snow Foundation</a
-              >
-            </li>
-            <li>
-              <a href="https://www.visualsnowsimulator.com" target="_blank"
-                >Another Visual Snow Simulator</a
-              >
-            </li>
-            <li>
-              <a href="https://odj.me/blog/2021-10-23-senses" target="_blank">
-                A blog post I wrote about visual snow and other sensory things
-              </a>
-            </li>
-          </ul>
-        </aside>
-      </section>
       <section id="section-visual-snow-effects" class="hide">
         <h1>The effects associated with Visual Snow</h1>
 
@@ -306,7 +308,7 @@
       </section>
       <footer>
         <section id="section-credits">
-          <h1>Website credits</h1>
+          <h1><a href="#section-credits">Website credits</a></h1>
           <p>
             Source to this site:
             <a href="https://github.com/owaindjones/visualsnow" target="_blank">
