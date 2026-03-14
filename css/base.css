@@ -40,7 +40,7 @@ main#intro {
   header {
     margin: -2rem -1rem 0px -1rem;
     padding: 4rem 0px;
-    background-image: url("/assets/noise.svg");
+    background-image: url("../assets/noise.svg");
     background-blend-mode: darken;
     background-attachment: fixed;
     background-size: cover;
