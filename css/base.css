@@ -192,19 +192,19 @@ main {
       margin-top: 1rem;
     }
     p {
-      margin-bottom: 2ch;
+      margin: 2ch 0;
       text-align: justify;
       text-align-last: auto;
     }
-    p:last-of-type {
-      margin-bottom: 0;
-    }
+    /*p:last-of-type {*/
+    /*  margin-bottom: 0;*/
+    /*}*/
     aside {
       display: inline-block;
       print-color-adjust: exact;
       break-inside: avoid;
       padding: 2rem;
-      margin: 2rem 1rem;
+      /*margin: 2rem 0;*/
       border-radius: 1rem;
       background-color: var(--background-color-highlight);
       border: 1px dotted var(--foreground-color-secondary);
@@ -219,6 +219,9 @@ main {
 
       p {
         margin-left: 0;
+      }
+      p:first-of-type {
+        margin-top: 0;
       }
       p:last-of-type {
         margin-bottom: 0;
@@ -460,10 +463,6 @@ main#intro {
   }
 
   main {
-    section {
-      column-count: 1;
-    }
-
     h2,
     h3,
     h4,
