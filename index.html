@@ -51,20 +51,50 @@
           <a id="go-to-demo" href="#demo"> Show what it looks like </a>
         </aside>
         <p>
-          <strong>Visual Snow</strong> is a set of things which can
+          <strong>Visual Snow Syndrome</strong> is a set of things which can
           <strong>affect your vision</strong>, even when
           <strong>you have good eyesight</strong>. Most of the effects of visual
           snow can be seen <strong>even when you have your eyes closed.</strong>
+        </p>
+        <p>
+          The main characteristic of Visual Snow is having
+          <strong>persistently grainy vision</strong> (the "snow"), like
+          <strong>static on a TV screen</strong>, or the ISO noise you see in
+          digital camera photos taken in dimly-lit places.
+        </p>
+        <figure>
+          <img
+            src="./assets/VisualSnowSyndrome.gif"
+            alt="An animation showing visual snow symptoms against a backdrop of a green field and a blue sky."
+          />
+          <label>
+            Credit:
+            <a href="https://www.visualsnowinitiative.org" target="_blank"
+              >visualsnowinitiative.org</a
+            >
+          </label>
+        </figure>
+        <p>
+          Other features of VSS include <strong>strong after-images</strong>,
+          being very aware of <strong>floaters</strong> even when not looking at
+          a bright sky, and a
+          <strong>sensitivity to bright lights.</strong> Some people also
+          experience having <strong>tinnitus</strong>, despite not having any
+          physical damage to their hearing.
+        </p>
+        <p>
+          Some effects are shared with the
+          <strong> visual aura of migraine</strong>, but visual snow is
+          distinct, usually constant, and not usually associated with headache.
         </p>
         <p>
           <strong>Everyone</strong> can experience some or all of the effects of
           visual snow from time to time, but many people don't notice them, or
           aren't bothered by them.
         </p>
-        <h2 id="visual-snow-syndrome">Visual Snow Syndrome</h2>
         <p>
-          When visual snow is <strong>intense enough</strong> to create
-          <strong>visual disturbances</strong> which can affect your
+          When visual snow is <strong>persistent enough</strong> or
+          <strong>intense enough</strong> to affect your
           <strong>day-to-day life</strong>, that's when we refer to it as
           <strong>Visual Snow Syndrome</strong>, or <strong>VSS</strong> for
           short.
@@ -74,7 +104,12 @@
           <strong>their entire life </strong> and see it as normal, whilst for
           others it can appear as <strong>a new condition</strong>.
         </p>
-        <aside id="under-construction">
+        <p>
+          An estimated <strong>2-3% of the world's population</strong> are
+          thought to experience Visual Snow Syndrome to some degree, with two
+          thirds reporting that it <strong>affects their night vision</strong>.
+        </p>
+        <aside id="under-construction" class="hide-print">
           <h1>🚧 Under Construction</h1>
           <p>
             The informational content on this site is very much still in
@@ -123,23 +158,23 @@
       ></video>
       <img id="image" src="./assets/book.jpg" class="hide" />
       <canvas id="canvas"></canvas>
-      <!--      <noscript id="noscript">-->
-      <!--        Sorry! The live demo requires Javascript to be enabled, and it isn't-->
-      <!--        enabled for you. Enable Javascript in your browser, or try another-->
-      <!--        browser or device if you can.-->
-      <!--      </noscript>-->
-      <!--      <div id="unsupported" class="hide">-->
-      <!--        Sorry! You're using a browser which doesn't support the WebGL features-->
-      <!--        we need for the live demo. Try another browser or device if you can.-->
-      <!--      </div>-->
-      <!--      <div id="camera-error" class="hide">-->
-      <!--        Sorry! We failed to open your camera. You may need to grant this webpage-->
-      <!--        permission to use it again.-->
-      <!--      </div>-->
-      <!--      <div id="render-error" class="hide">-->
-      <!--        Sorry! Something went wrong when rendering the visual snow. You may have-->
-      <!--        better luck if you try another browser or device.-->
-      <!--      </div>-->
+      <noscript id="noscript">
+        Sorry! The live demo requires Javascript to be enabled, and it isn't
+        enabled for you. Enable Javascript in your browser, or try another
+        browser or device if you can.
+      </noscript>
+      <div id="unsupported" class="hide error-message">
+        Sorry! You're using a browser which doesn't support the WebGL features
+        we need for the live demo. Try another browser or device if you can.
+      </div>
+      <div id="camera-error" class="hide error-message">
+        Sorry! We failed to open your camera. You may need to grant this webpage
+        permission to use it again.
+      </div>
+      <div id="render-error" class="hide error-message">
+        Sorry! Something went wrong when rendering the visual snow. You may have
+        better luck if you try another browser or device.
+      </div>
       <div id="control-wrapper" class="hide-print invisible hide">
         <form id="controls">
           <div class="control">
@@ -292,19 +327,21 @@
         <h1>References</h1>
       </section>
       <section id="section-this-site-online" class="show-print">
-        <h1>This document, online</h1>
+        <h1>
+          <a href="https://owaindjones.github.io/visualsnow" target="_blank">
+            https://owaindjones.github.io/visualsnow
+          </a>
+        </h1>
         <p>
           This is an interactive site, where you can view the effects of visual
-          snow in real-time on photos, videos or your live camera feed:
+          snow in real-time on photos, videos or your live camera feed.
         </p>
-        <aside style="text-align: center" id="site-link">
-          <h2>
-            <a href="https://owaindjones.github.io/visualsnow" target="_blank">
-              https://owaindjones.github.io/visualsnow
-            </a>
-          </h2>
-          <img src="assets/qr-code.svg" />
-        </aside>
+        <p>
+          Nothing leaves your web browser, but if you'd rather not share photos
+          or videos with the site, you can randomly choose between some example
+          videos using the dice button 🎲.
+        </p>
+        <img src="assets/qr-code.svg" />
       </section>
       <footer>
         <section id="section-credits">

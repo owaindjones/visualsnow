@@ -38,6 +38,7 @@ main#intro {
   min-height: 105vh;
 
   header {
+    print-color-adjust: exact;
     margin: -2rem -1rem 0px -1rem;
     padding: 4rem 0px;
     background-image: url("../assets/noise.svg");
@@ -71,7 +72,6 @@ main#intro {
 }
 
 main {
-  break-before: page;
   padding: 1rem;
   background-color: var(--background-color-secondary);
   color: var(--foreground-color-secondary);
@@ -111,7 +111,34 @@ main {
     max-height: 100%;
   }
 
+  figure {
+    border-radius: 1rem;
+    background-color: var(--background-color-highlight);
+    border: 1px dotted var(--foreground-color-secondary);
+    width: fit-content;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 75%;
+    color: var(--foreground-color-secondary);
+    text-align: center;
+    padding: 0.25rem;
+
+    img {
+      border-radius: 1rem;
+      max-width: 100%;
+    }
+
+    label {
+      display: block;
+      line-height: 1.25rem;
+    }
+  }
+
   section {
+    vertical-align: middle;
+    align-content: center;
+    align-items: center;
     display: block;
     break-after: page;
     margin: 0 auto;
@@ -134,14 +161,6 @@ main {
       }
     }
 
-    /*h2,*/
-    /*h3,*/
-    /*h4,*/
-    /*h5,*/
-    /*h6 {*/
-    /*  padding-left: 1rem;*/
-    /*}*/
-
     h1,
     h2,
     h3,
@@ -163,38 +182,16 @@ main {
     h2 {
       margin-top: 4rem;
     }
-    /*p:after(h2) {*/
-    /*  margin-left: 2rem;*/
-    /*}*/
     h3 {
       margin-top: 3rem;
-      /*margin-left: 1rem;*/
     }
-    /*p:after(h3) {*/
-    /*  margin-left: 3rem;*/
-    /*}*/
     h4 {
       margin-top: 2rem;
-      /*margin-left: 2rem;*/
     }
-    /*p:after(h4) {*/
-    /*  margin-left: 4rem;*/
-    /*}*/
     h5 {
       margin-top: 1rem;
-      /*margin-left: 3rem;*/
     }
-    /*p:after(h5) {*/
-    /*  margin-left: 5rem;*/
-    /*}*/
-    /*h6 {*/
-    /*  margin-left: 4rem;*/
-    /*}*/
-    /*p:after(h6) {*/
-    /*  margin-left: 6rem;*/
-    /*}*/
     p {
-      /*margin-left: 1rem;*/
       margin-bottom: 2ch;
       text-align: justify;
       text-align-last: auto;

@@ -513,7 +513,7 @@ class Renderer {
     }
     let fps = 1.0 / delta;
     this.fps = fps * 0.01 + this.fps * 0.99;
-    if (!this.fpsContainer.classList.contains("hide")) {
+    if (this.options.showFPS && !this.fpsContainer.classList.contains("hide")) {
       this.fpsContainer.innerText = `FPS: ${Math.round(this.fps)}`;
     }
     this.lastRender = time;
