@@ -216,6 +216,12 @@ async function start() {
   }
   await renderer.renderLoop(0);
   selectRandomMedia("safe");
+  if (window.location.search.includes("refresh")) {
+    const refreshEvery = parseFloat(window.location.search.split("=")[1]);
+    setTimeout(() => {
+      window.location.reload();
+    }, refreshEvery);
+  }
 }
 
 await start();
