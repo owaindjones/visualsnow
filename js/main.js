@@ -220,7 +220,7 @@ async function start() {
     const refreshEvery = parseFloat(window.location.search.split("=")[1]);
     setTimeout(() => {
       window.location.reload();
-    }, refreshEvery);
+    }, refreshEvery * 1000);
   }
 }
 
